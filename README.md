@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 This project uses CMake and vcpkg for managing C++ dependencies. It serves as a simple example to test your build setup before we get into more complicted code.
 
 ## Building Using CMake Presets
@@ -127,6 +126,5 @@ Then, when you restart your terminals, you should be able to run the vcpkg progr
 vcpkg
 ```
 
-=======
+
 # Computer-Graphics
->>>>>>> 94f8c050efb14543262a7e003877a8f627f80284
