@@ -2,10 +2,13 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include "../renderlib/vec3.h"
 
-// People I talked to: Sara, Maddie, Breta, Ethan
+// People I talked to and worked with: Sara, Maddie, Breta, Ethan
 
 // Operators: addition, dot product, cross product, scalar multiplication, scalar division
 
+// Addition
+// Expected behavior: Component-wise addition
+// Verification: Add two known vectors and independently check each component against expected values
 TEST_CASE( "vec3 addition test" )
 {
     vec3 a(1, 1, 1);
@@ -20,6 +23,9 @@ TEST_CASE( "vec3 addition test" )
     REQUIRE_THAT( c.z(), Catch::Matchers::WithinAbs(actualAnswer, eps));
 }
 
+// Dot Product
+// Expected behavior: Scalar result a*b = a.x*b.x + a.y*b.y + a.z*b.z
+// Verification: Compute dot product of two known vectors with mixed signs and compare against independently calculated expected value
 TEST_CASE( "vec3 dot product test" )
 {
     vec3 a(1, 2, 3);
@@ -35,6 +41,9 @@ TEST_CASE( "vec3 dot product test" )
     // REQUIRE( result  == actualAnswer);
 }
 
+// Cross Product
+// Expected behavior: Vector perpendicult to both inputs, with components following the right-hand rule
+// Verification: Cross two non-parallel vectors and check each resulting components against independently calculated expected values
 TEST_CASE( "vec3 cross product test" )
 {
     vec3 a(1, 2, 3);
@@ -51,6 +60,9 @@ TEST_CASE( "vec3 cross product test" )
     // REQUIRE( c.z() == -13.0);
 }
 
+// Scalar Multiplication
+// Expected behavior: Each component is multiplied by the scalar
+// Verification: Multiply a vector by a scalar and validate each componennts independently
 TEST_CASE( "vec3 scalar multiplication test" )
 {
     vec3 a(1, -2, 3);
@@ -67,6 +79,9 @@ TEST_CASE( "vec3 scalar multiplication test" )
 //     REQUIRE( c.z() == 9.0 );
 }
 
+// Scalar Division
+// Expected behavior: Each componenet is divided by the scalar (scalar != 0)
+// Verification: Divide by a scalar and check each component against expected fractional values
 TEST_CASE( "vec3 scalar division test" )
 {
     vec3 a(1, -2, 3);
