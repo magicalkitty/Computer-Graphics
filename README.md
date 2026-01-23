@@ -128,7 +128,7 @@ vcpkg
 
 # Running Unit Tests
 This project includes unit tests for the vec3 class using Catch2.
-After building the project successfully, run the unit test by navigating to the test executable directory and executing it. 
+After building the project successfully in the build directory, run the unit test by navigating to the test executable directory and executing it. 
 ```
 cd utests/Debug
 ./vec3_utests.exe
