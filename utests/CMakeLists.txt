@@ -5,6 +5,7 @@
 # src files.
 #
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/renderlib)
 
 enable_testing()
 include(CTest)
@@ -19,7 +20,8 @@ include(Catch)
 # 
 set(UTESTS 
   utest_Success
-  utest_Failure)
+  utest_Failure
+  vec3_utest)
 
 # 
 # For each of the executables named in ${UTESTS}, compile them into a
