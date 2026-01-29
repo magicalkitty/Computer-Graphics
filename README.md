@@ -135,3 +135,13 @@ cd utests/Debug
 ./vec3_utests.exe
 ```
 The test runner will execute all vec3 unit tests and report the results.
+
+
+This project includes untit tests for tha ray class using Catch2.
+
+After building the project successfully in the build directory, run the ray unit tests by navigating to the test executable directory and executing it.
+```
+cd utests/Debug
+./ray_utests.exe
+```
+he test runner will execute all ray unit tests and report the results.

@@ -19,9 +19,11 @@ include(Catch)
 # compile into an executable.
 # 
 set(UTESTS 
+  utest_framebuffer
   utest_Success
   utest_Failure
-  vec3_utest)
+  vec3_utest
+  ray_utest)
 
 # 
 # For each of the executables named in ${UTESTS}, compile them into a
