@@ -35,7 +35,7 @@ void Framebuffer::exportToPNG(std::string filename)
 {
     // Input Validator
 
-    
+
     // Create an image of size (width x height)
     png::image<png::rgb_pixel> imData(width, height);
 
@@ -47,7 +47,7 @@ void Framebuffer::exportToPNG(std::string filename)
             png::byte g = static_cast<png::byte>(std::clamp(c.y() * 255.0, 0.0, 255.0));
             png::byte b = static_cast<png::byte>(std::clamp(c.z() * 255.0, 0.0, 255.0));
             // The origin for indexing the height is in lower left...
-            imData[y][x] = png::rgb_pixel( r, g, b );
+            imData[height - 1 - y][x] = png::rgb_pixel( r, g, b );
         }
     }
     imData.write(filename + ".png");
