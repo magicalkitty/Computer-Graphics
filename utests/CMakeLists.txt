@@ -19,7 +19,7 @@ include(Catch)
 # compile into an executable.
 # 
 set(UTESTS 
-  utest_framebuffer
+  framebuffer_utest
   utest_Success
   utest_Failure
   vec3_utest

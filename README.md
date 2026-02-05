@@ -127,17 +127,19 @@ vcpkg
 ```
 
 # Running Unit Tests
-This project includes unit tests for the vec3 class using Catch2. After building the project successfully in the build directory, run the vec3 unit tests by navigating to the test executable directory and executing it. 
+This project includes unit tests for the vec3, ray, and sphere class using Catch2. After building the project successfully in the build directory, run the selected unit tests by navigating to the test executable directory and executing it. 
+
+All unit test executables follow the same naming and execution pattern.
+After building the project, naivate to the test executable directory and run any test:
 ```
 cd utests/Debug
-./vec3_utests.exe
+./<test_name>_utest.exe
 ```
-The test runner will execute all vec3 unit tests and report the results.
+For example:
+-`vec3_utest.exe`
+-`framebuffer_utest.exe`
+-`ray_utest.exe`
+-`sphere_utest.exe`
+-and any additional unit tests added in the future.
 
-
-This project includes untit tests for tha ray class using Catch2. After building the project successfully in the build directory, run the ray unit tests by navigating to the test executable directory and executing it.
-```
-cd utests/Debug
-./ray_utests.exe
-```
-he test runner will execute all ray unit tests and report the results.
+Each executable will run its corresponding Catch2 test suite and report the results.

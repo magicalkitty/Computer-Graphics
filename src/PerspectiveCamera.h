@@ -5,8 +5,8 @@
 class PerspectiveCamera : public Camera{
     public:
 
-    PerspectiveCamera() : Camera(200, 200) {
-        focallength = 0.05f;
+    PerspectiveCamera() : Camera(900, 600) {
+        focallength = 1.0f;
 
         l = -imageplane_width/2.0f; 
         r = imageplane_width/2.0f; 
