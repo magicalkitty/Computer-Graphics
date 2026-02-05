@@ -23,7 +23,8 @@ set(UTESTS
   utest_Success
   utest_Failure
   vec3_utest
-  ray_utest)
+  ray_utest
+  sphere_utest)
 
 # 
 # For each of the executables named in ${UTESTS}, compile them into a
