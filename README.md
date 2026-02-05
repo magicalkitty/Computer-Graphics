@@ -136,10 +136,10 @@ cd utests/Debug
 ./<test_name>_utest.exe
 ```
 For example:
--`vec3_utest.exe`
--`framebuffer_utest.exe`
--`ray_utest.exe`
--`sphere_utest.exe`
--and any additional unit tests added in the future.
+* `vec3_utest.exe`
+* `framebuffer_utest.exe`
+* `ray_utest.exe`
+* `sphere_utest.exe`
+* and any additional unit tests added in the future.
 
 Each executable will run its corresponding Catch2 test suite and report the results.
