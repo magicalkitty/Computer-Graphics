@@ -13,10 +13,6 @@ class BlinnPhong : public Shader {
     public:
         BlinnPhong(const color& diffuseColor, float exponent = 32.0f) : diffuseColor(diffuseColor), phongExp(exponent) {}
 
-        // Lambertian(const Light& lightDir) : lightDir(lightDir) {}; 
-        // dot product between normal vector of object and light direction vector
-        // if negative, then the light is behind the surface and we return 0: max(0, dot(hit.normal, light_direction))
-        
         color rayColor(const hit_record& hit, const Light& light) override {
             Lambertian lambert(diffuseColor);
             color diffuse = lambert.rayColor(hit, light);

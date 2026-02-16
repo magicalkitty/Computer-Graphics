@@ -48,6 +48,7 @@ class Scene : public hittable {
         float localTmax = tmax;
         bool hitShape = false;
 
+        // find the closest hit
         for (int idx=0; idx<objects.size(); ++idx) {
             if (objects[idx]->intersect(r, tmin, localTmax, rec)) {
                 hitShape = true;
@@ -56,13 +57,22 @@ class Scene : public hittable {
         }
 
         if (hitShape) {
-            // babab
-            std::shared_ptr<Shader> shader = rec.shaderPointer;
-            color c = shader->rayColor(rec, light);
-            return c;
+            // if the object has a shader, use it
+            if (rec.shaderPointer) {
+                std::shared_ptr<Shader> shader = rec.shaderPointer;
+                color c = shader->rayColor(rec, light);
+                return c;
+            }
+            else{
+                return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
+            }
+        
         }
         else {
-            return backgroundColor;
+            // return backgroundColor;
+            vec3 unit_direction = unit_vector(r.direction());
+            auto a = 0.5*(unit_direction.y() + 1.0);
+            return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
         }
     }
 };

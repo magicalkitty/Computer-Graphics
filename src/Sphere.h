@@ -10,13 +10,11 @@ using color = vec3;
 
 class Sphere : public hittable {
     public:
-        Sphere(const point3& center, double radius, std::shared_ptr<Shader> shaderPtr) : center(center), radius(std::fmax(0, radius)), shader(shaderPtr) {}
+        Sphere(const point3& center, double radius, std::shared_ptr<Shader> shaderPtr = nullptr) : center(center), radius(std::fmax(0, radius)), shader(shaderPtr) {}
 
         const point3& get_center() const { return center; }
         double get_radius() const { return radius; }
         std::shared_ptr<Shader> getShader() const { return shader; }
-        void setShader(std::shared_ptr<Shader> shaderPtr) {shader = shaderPtr;}
-
 
         bool intersect(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const override {
             vec3 oc = center -r.origin();

@@ -6,10 +6,7 @@
 #include "Light.h"
 #include <memory>
 
-using color = vec3;
-
 struct hit_record;
-class Light;
 
 class Shader {
     public:

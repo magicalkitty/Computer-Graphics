@@ -6,7 +6,9 @@
 
 class Triangle : public hittable {
     public:
-        Triangle(const point3& a, const point3& b, const point3& c) : a(a), b(b), c(c) {}
+        Triangle(const point3& a, const point3& b, const point3& c, std::shared_ptr<Shader> shaderPtr = nullptr) : a(a), b(b), c(c), shader(shaderPtr) {}
+
+        std::shared_ptr<Shader> getShader() const { return shader; }
 
         bool intersect(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const override {
             double A = a.x() - b.x();
@@ -62,11 +64,13 @@ class Triangle : public hittable {
             rec.beta = beta;
             rec.gamma = gamma;
             rec.alpha = 1.0 - beta - gamma;
+            rec.shaderPointer = shader;
         
             return true;
         }
     private:
         point3 a, b, c;
+        std::shared_ptr<Shader> shader;
 };
 
 #endif // TRIANGLE_H
