@@ -11,8 +11,14 @@ class Camera {
 
     Camera(int pixel_nx, int pixel_ny)
         : position(0, 0, 0), U(1, 0, 0), V(0, 1, 0), W(0, 0, 1),
-            focallength(0.1f), imageplane_width(0.5f), imageplane_height(0.5f),
-            nx(pixel_nx), ny(pixel_ny) {}
+            focallength(1.0f),
+            nx(pixel_nx), ny(pixel_ny) {
+
+                imageplane_width= 0.5f;
+                float aspectratio = (float)nx/(float)ny;
+                // using w / h set heifht of imageplane
+                imageplane_height = imageplane_width / aspectratio;
+            }
 
     virtual ~Camera() {}
 

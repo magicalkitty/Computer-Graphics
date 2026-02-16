@@ -5,8 +5,8 @@
 class PerspectiveCamera : public Camera{
     public:
 
-    PerspectiveCamera() : Camera(900, 600) {
-        focallength = 1.0f;
+    PerspectiveCamera(int nx, int ny, float set_focallength) : Camera(nx, ny) {
+        focallength = set_focallength;
 
         l = -imageplane_width/2.0f; 
         r = imageplane_width/2.0f; 

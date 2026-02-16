@@ -45,7 +45,7 @@ TEST_CASE(" Sphere ray intersection test 1 - miss")
 
     hit_record rec;
 
-    bool hit = s.hit(r, 0.001, INFINITY, rec);
+    bool hit = s.intersect(r, 0.001, INFINITY, rec);
 
     float eps = 1.0e-3; // a tolerance for how close the answer needs to be
 
@@ -78,7 +78,7 @@ TEST_CASE(" Sphere ray intersection test 2 - direct hit ")
 
     hit_record rec;
 
-    bool hit = s.hit(r, 0.001, INFINITY, rec);
+    bool hit = s.intersect(r, 0.001, INFINITY, rec);
 
     float eps = 1.0e-3; // a tolerance for how close the answer needs to be
 
@@ -110,7 +110,7 @@ TEST_CASE(" Sphere ray intersection test 3 - grazing hit ")
 
     hit_record rec;
 
-    bool hit = s.hit(r, 0.001, INFINITY, rec);
+    bool hit = s.intersect(r, 0.001, INFINITY, rec);
 
     float eps = 1.0e-3; // a tolerance for how close the answer needs to be
 
