@@ -16,7 +16,7 @@ using std::shared_ptr;
 class Scene : public hittable {
   public:
     std::vector<shared_ptr<hittable>> objects;
-    vec3 backgroundColor = vec3(1.0, 1.0, 1.0);
+    vec3 backgroundColor = vec3(178.0/255.0, 221.0/255.0, 235.0/255.0);
 
     Scene() {}
     Scene(shared_ptr<hittable> object) { add(object); }
@@ -43,7 +43,26 @@ class Scene : public hittable {
         return hit_anything;
     };
 
-    color computeRayColor(const ray& r, double tmin, double tmax, Light& light) {
+    bool shadowChecker(const hit_record& rec, double tmin, double tmax, const Light& light) const {
+        vec3 lightingRay = light.getPosition() - rec.p;
+        ray shadowRay(rec.p, lightingRay);
+
+        hit_record tempRec;
+
+        for (int idx=0; idx<objects.size(); ++idx) {
+            if (objects[idx]->intersect(shadowRay, tmin, tmax, tempRec)) {
+                return true; // blocked --> shadow!
+            }
+        }
+
+        return false; // visible --> no shadow!
+    }
+
+    color computeRayColor(const ray& r, double tmin, double tmax, const Light& light, int depth) const {
+        if (depth <= 0) {
+            return backgroundColor;
+        }
+        
         hit_record rec;
         float localTmax = tmax;
         bool hitShape = false;
@@ -59,9 +78,9 @@ class Scene : public hittable {
         if (hitShape) {
             // if the object has a shader, use it
             if (rec.shaderPointer) {
-                std::shared_ptr<Shader> shader = rec.shaderPointer;
-                color c = shader->rayColor(rec, light);
-                return c;
+                    std::shared_ptr<Shader> shader = rec.shaderPointer;
+                    color c = shader->rayColor(*this, rec, light, depth - 1);
+                    return c;
             }
             else{
                 return 0.5 * (rec.normal + color(1.0, 1.0, 1.0));
@@ -70,9 +89,10 @@ class Scene : public hittable {
         }
         else {
             // return backgroundColor;
-            vec3 unit_direction = unit_vector(r.direction());
-            auto a = 0.5*(unit_direction.y() + 1.0);
-            return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+            return backgroundColor;
+            // vec3 unit_direction = unit_vector(r.direction());
+            // auto a = 0.5*(unit_direction.y() + 1.0);
+            // return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
         }
     }
 };

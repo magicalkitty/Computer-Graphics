@@ -42,6 +42,7 @@ class Sphere : public hittable {
             rec.normal = unit_vector(rec.p - center);
             rec.set_face_normal(r, rec.normal);
             rec.shaderPointer = shader;
+            rec.r = r;
 
             return true;
         }

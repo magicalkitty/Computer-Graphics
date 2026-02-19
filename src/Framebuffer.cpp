@@ -35,7 +35,6 @@ void Framebuffer::exportToPNG(std::string filename)
 {
     // Input Validator
 
-
     // Create an image of size (width x height)
     png::image<png::rgb_pixel> imData(width, height);
 

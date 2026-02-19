@@ -65,6 +65,7 @@ class Triangle : public hittable {
             rec.gamma = gamma;
             rec.alpha = 1.0 - beta - gamma;
             rec.shaderPointer = shader;
+            rec.r = r;
         
             return true;
         }

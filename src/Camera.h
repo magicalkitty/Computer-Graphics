@@ -23,7 +23,7 @@ class Camera {
     virtual ~Camera() {}
 
     // camera needs to know pixel image dimensions
-    virtual void generateRay(int i, int j, ray &r) = 0;
+    virtual void generateRay(float i, float j, ray &r) = 0;
 
     // Virtual Ray generateRay(int i, int j) = 0;
 

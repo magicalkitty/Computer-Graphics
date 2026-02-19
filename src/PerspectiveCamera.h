@@ -16,7 +16,7 @@ class PerspectiveCamera : public Camera{
     // PerspectiveCamera(vec3 origin, vec3 viewdir, float focallenght,...)
     // dir, focal, dimension, 
 
-    void generateRay(int i, int j, ray &r0) override 
+    void generateRay(float i, float j, ray &r0) override 
     {
         float u, v; 
 

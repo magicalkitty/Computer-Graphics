@@ -6,7 +6,14 @@ add_library (cs4212-util
   ray.h
   main.cpp
   Sphere.h
-  Shape.h)
+  Triangle.h
+  Camera.h
+  Scene.h
+  Light.h
+  Shader.h
+  Lambertian.h
+  BlinnPhong.h
+  Mirror.h)
 
 target_compile_definitions(cs4212-util PUBLIC HAS_GLM)
 target_link_libraries(cs4212-util PRIVATE Boost::program_options)
