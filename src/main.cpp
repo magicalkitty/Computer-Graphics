@@ -19,8 +19,8 @@ float randomOffset() {
 }
 
 int main() {
-    int nx = 50;
-    int ny = 50;
+    int nx = 900;
+    int ny = 900;
     Framebuffer fb(nx, ny);
     
     PerspectiveCamera cam(nx, ny, 1.5f);
@@ -162,7 +162,7 @@ int main() {
 
     world.clear();
 
-    shared_ptr<Sphere> sphere9 = make_shared<Sphere>(point3(0.0, 0.0, -10.0), 1.0, lambertShader);
+    shared_ptr<Sphere> sphere9 = make_shared<Sphere>(point3(0.0, 0.0, -10.0), 1.0, BlinnPhongShader);
     world.add(sphere9);
 
     for (int x=0; x<fb.get_width(); ++x) {
