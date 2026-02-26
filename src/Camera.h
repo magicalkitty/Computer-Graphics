@@ -20,6 +20,17 @@ class Camera {
                 imageplane_height = imageplane_width / aspectratio;
             }
 
+    Camera(vec3 position, int pixel_nx, int pixel_ny)
+        : position(position), U(1, 0, 0), V(0, 1, 0), W(0, 0, 1),
+            focallength(1.0f),
+            nx(pixel_nx), ny(pixel_ny) {
+
+                imageplane_width= 0.5f;
+                float aspectratio = (float)nx/(float)ny;
+                // using w / h set heifht of imageplane
+                imageplane_height = imageplane_width / aspectratio;
+            }
+
     virtual ~Camera() {}
 
     // camera needs to know pixel image dimensions

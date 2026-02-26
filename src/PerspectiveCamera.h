@@ -13,6 +13,15 @@ class PerspectiveCamera : public Camera{
         b = -imageplane_height/2.0f;
         t = imageplane_height/2.0f; 
     }
+
+    PerspectiveCamera(vec3 position, int nx, int ny, float set_focallength) : Camera(position, nx, ny) {
+        focallength = set_focallength;
+
+        l = -imageplane_width/2.0f; 
+        r = imageplane_width/2.0f; 
+        b = -imageplane_height/2.0f;
+        t = imageplane_height/2.0f; 
+    }
     // PerspectiveCamera(vec3 origin, vec3 viewdir, float focallenght,...)
     // dir, focal, dimension, 
 
