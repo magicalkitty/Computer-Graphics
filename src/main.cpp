@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     Framebuffer fb(nx, ny);
     
     float focalLength = args.useDepthOfField ? args.depthOfFieldDistance : 1.0f;
-    PerspectiveCamera cam(nx, ny, focalLength);
+    PerspectiveCamera cam(vec3(0, .5, 0), vec3(0, 0, -1), nx, ny, focalLength);
     
     Scene world;
 
@@ -38,6 +38,9 @@ int main(int argc, char* argv[]) {
     int rpp_NSquare = (args.rpp > 0) ? args.rpp : 4;
 
     int recursionDepth = (args.recursionDepth > 0) ? args.recursionDepth : 10;
+
+    fb.clearToGradient(color(204.0/255.0, 126.0/255.0, 88.0/255.0), color(105.0/255.0, 88.0/255.0, 204.0/255.0));
+    fb.exportToPNG("gradient_output");
 
     fb.clearToColor(color(0.0, 0.0, 0.0));
     for (int j = 0; j < ny; ++j) {
@@ -102,24 +105,11 @@ int main(int argc, char* argv[]) {
     
     for (int y=0; y<fb.get_height(); ++y) {
         for (int x=0; x<fb.get_width(); ++x) {
-            color c(0.0, 0.0, 0.0);
 
-            for (int p=0; p<rpp_NSquare; ++p) {
-                for (int q=0; q<rpp_NSquare; ++q) {
-                    float tmin = 1.0;
-                    float tmax = std::numeric_limits<float>::infinity();
-                    
-                    float pOffset = (p + randomOffset())/ rpp_NSquare;
-                    float qOffset = (q + randomOffset())/ rpp_NSquare;
+            ray r;
+            cam.generateRay(x, y, r);
+            color c = world.computeRayColor(r, 1.0, INFINITY, light, recursionDepth);
 
-                    ray r;
-                    cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
-
-                }
-            }
-
-            c /= (rpp_NSquare * rpp_NSquare);
             fb.setPixelColor(x, y, c);
         }
     
@@ -238,6 +228,103 @@ int main(int argc, char* argv[]) {
     }
 
     fb.exportToPNG("Testing_antialiasing");
+
+    world.clear();
+    shared_ptr<Shader> catShader = make_shared<Lambertian>(color(245.0/255.0, 147.0/255.0, 227.0/255.0));
+    shared_ptr<Shader> eyeShader = make_shared<BlinnPhong>(color(0.0, 0.0, 0.0));;
+    
+    // ===== Body =====
+    shared_ptr<Sphere> body = make_shared<Sphere>(point3(0.0, 0.0, -10.0), 1.0, catShader);
+    world.add(body);
+
+    // ===== Head =====
+    shared_ptr<Sphere> head = make_shared<Sphere>(point3(0.0, 1.2, -10.0), 0.6, catShader);
+    world.add(head);
+
+    // ===== Ears =====
+    shared_ptr<Triangle> leftEar = make_shared<Triangle>(
+        point3(-0.5, 1.25, -10.0),   // left base corner
+        point3(-0.2, 1.7, -10.0),   // right base corner
+        point3(-0.45, 2.1, -10.0),  // tip pointing up
+        catShader
+    );
+    world.add(leftEar);
+
+    shared_ptr<Triangle> rightEar = make_shared<Triangle>(
+        point3(0.2, 1.7, -10.0),    // left base corner
+        point3(0.5, 1.25, -10.0),    // right base corner
+        point3(0.45, 2.1, -10.0),   // tip pointing up
+        catShader
+    );
+    world.add(rightEar);
+
+    // ===== Eyes =====
+    shared_ptr<Sphere> leftEye = make_shared<Sphere>(point3(-0.2, 1.3, -9.5), 0.1, eyeShader);
+    world.add(leftEye);
+
+    shared_ptr<Sphere> rightEye = make_shared<Sphere>(point3(0.2, 1.3, -9.5), 0.1, eyeShader);
+    world.add(rightEye);
+
+    // ===== Nose =====
+    shared_ptr<Sphere> nose = make_shared<Sphere>(point3(0.0, 1.1, -9.45), 0.05, catShader);
+    world.add(nose);
+
+    // ===== Legs =====
+    shared_ptr<Sphere> frontLeftLeg = make_shared<Sphere>(point3(-0.4, -0.7, -9.6), 0.3, catShader);
+    world.add(frontLeftLeg);
+
+    shared_ptr<Sphere> frontRightLeg = make_shared<Sphere>(point3(0.4, -0.7, -9.6), 0.3, catShader);
+    world.add(frontRightLeg);
+
+    shared_ptr<Sphere> backLeftLeg = make_shared<Sphere>(point3(-0.4, -0.7, -10.4), 0.3, catShader);
+    world.add(backLeftLeg);
+
+    shared_ptr<Sphere> backRightLeg = make_shared<Sphere>(point3(0.4, -0.7, -10.4), 0.3, catShader);
+    world.add(backRightLeg);    
+
+    // ===== Optional Whiskers =====
+    shared_ptr<Triangle> leftWhisker = make_shared<Triangle>(
+        point3(-0.05, 1.1, -9.45),
+        point3(-0.6, 1.1, -9.45),
+        point3(-0.05, 1.12, -9.45),
+        catShader
+    );
+    world.add(leftWhisker);
+
+    shared_ptr<Triangle> rightWhisker = make_shared<Triangle>(
+        point3(0.05, 1.1, -9.45),
+        point3(0.6, 1.1, -9.45),
+        point3(0.05, 1.12, -9.45),
+        catShader
+    );
+    world.add(rightWhisker);
+
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
+            color c(0.0, 0.0, 0.0);
+
+            for (int p=0; p<rpp_NSquare; ++p) {
+                for (int q=0; q<rpp_NSquare; ++q) {
+                    float tmin = 1.0;
+                    float tmax = std::numeric_limits<float>::infinity();
+                    
+                    float pOffset = (p + randomOffset())/ rpp_NSquare;
+                    float qOffset = (q + randomOffset())/ rpp_NSquare;
+
+                    ray r;
+                    cam.generateRay(x + pOffset, y + qOffset, r);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+
+                }
+            }
+
+            c /= (rpp_NSquare * rpp_NSquare);
+            fb.setPixelColor(x, y, c);
+        }
+    }
+
+    fb.exportToPNG("Testing_cat");
+
     
     return 0;
 }

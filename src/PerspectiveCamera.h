@@ -4,11 +4,11 @@
 
 class PerspectiveCamera : public Camera{
     public:
+    PerspectiveCamera();
+
     PerspectiveCamera(int nx, int ny, float fov);
 
-    PerspectiveCamera(vec3 position, int nx, int ny, float fov);
-    // PerspectiveCamera(vec3 origin, vec3 viewdir, float focallenght,...)
-    // dir, focal, dimension, 
+    PerspectiveCamera(vec3 position, vec3 viewDir, int nx, int ny, float fov);
 
     ray generateRay(float i, float j, ray &r0) override;
 
