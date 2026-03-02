@@ -30,6 +30,32 @@ target_link_libraries(cs4212-util PUBLIC PNG::PNG)
 add_executable(main
   main.cpp
 )
-target_link_libraries(main cs4212-util)
-target_link_libraries(main ${Boost_PROGRAM_OPTIONS_LIBRARIES})
-target_link_libraries(main PNG::PNG)
+
+target_link_libraries(main
+    PRIVATE
+        cs4212-util
+        Boost::program_options
+        PNG::PNG
+)
+
+# -----------------------------------
+# triangleChallenge executable
+add_executable(readTriangleVerts
+  triangleChallenge/readTriangleVerts.cpp
+)
+
+target_link_libraries(readTriangleVerts
+  PRIVATE
+    cs4212-util
+    Boost::program_options
+    PNG::PNG
+)
+
+# -------------------------
+# Enable OpenMP for all executables
+# Must be done **after executables are defined**
+find_package(OpenMP REQUIRED)
+
+# Link OpenMP using keyword style
+target_link_libraries(main PRIVATE OpenMP::OpenMP_CXX)
+target_link_libraries(readTriangleVerts PRIVATE OpenMP::OpenMP_CXX)

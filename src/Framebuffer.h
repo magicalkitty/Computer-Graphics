@@ -19,7 +19,7 @@ class Framebuffer {
     void setPixelColor(int index, const color c);
 
     // my fb is vec3... how do i convert from [0,1] floats to 255
-    void exportToPNG(const std::string filename);
+    void exportToPNG(std::string filename);
 
     int get_width() const { return width; }
     int get_height() const { return height; }

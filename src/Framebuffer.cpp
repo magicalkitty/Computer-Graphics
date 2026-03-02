@@ -41,7 +41,7 @@ void Framebuffer::setPixelColor(int index, const color c)
     fbStorage[index] = c;
 }
 
-void Framebuffer::exportToPNG(const std::string filename)
+void Framebuffer::exportToPNG(std::string filename)
 {
     // Create an image of size (width x height)
     png::image<png::rgb_pixel> imData(width, height);
