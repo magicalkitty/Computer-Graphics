@@ -140,7 +140,7 @@ cmake --build .
 
 After building this project in `buildVCPkg`, run the excetutable with optional arguments to control rendering settings:
 ```
-./src/Debug/main.exe [--width image_width] [--height image_height] [--rpp rays_per_pixel] [--recursionDepth max_depth] [--useDepthOfField focallength]
+./src/Debug/main.exe [--width image_width] [--height image_height] [--rpp rays_per_pixel] [--recursionDepth max_depth] [--depth focallength]
 ```
 
 
