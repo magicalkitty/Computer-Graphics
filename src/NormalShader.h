@@ -3,18 +3,12 @@
 #include "Shader.h"
 #include "Light.h"
 #include "../renderlib/vec3.h"
+#include "Scene.h"
 #include <algorithm>
-#include <cmath>
-#include "Lambertian.h"
 
 using color = vec3;
 
-class BlinnPhong : public Shader {
+class NormalShader : public Shader {
     public:
-        BlinnPhong(const color& diffuseColor, float exponent = 32.0f);
-
         color rayColor(const Scene& world, const hit_record& hit, const Light& light, int depth) const override;
-    private:
-        color diffuseColor;
-        float phongExp;
 };

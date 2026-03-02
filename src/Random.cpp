@@ -35,9 +35,9 @@ void Random::init(long s)
 Random::Random()
   : m_uniform_dist(0.0, 1.0), m_normal_dist(0.0, 1.0)
 {
-#ifndef WIN32
-  init( time(0) % getpid() );
-#endif
+  #ifndef WIN32
+    init( time(0) % getpid() );
+  #endif
 }
 
 Random::Random(long s)

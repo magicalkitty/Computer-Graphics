@@ -24,6 +24,7 @@
 
 #include <limits>
 #include <random>
+#include <cstdlib>
 
 namespace sivelab {
 

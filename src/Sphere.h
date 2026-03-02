@@ -10,42 +10,14 @@ using color = vec3;
 
 class Sphere : public hittable {
     public:
-        Sphere(const point3& center, double radius, std::shared_ptr<Shader> shaderPtr = nullptr) : center(center), radius(std::fmax(0, radius)), shader(shaderPtr) {}
+        Sphere();
+        Sphere(const point3& center, double radius, std::shared_ptr<Shader> shaderPtr = nullptr);
 
         const point3& get_center() const { return center; }
         double get_radius() const { return radius; }
         std::shared_ptr<Shader> getShader() const { return shader; }
 
-        bool intersect(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const override {
-            vec3 oc = center -r.origin();
-            auto a = r.direction().length_squared();
-            auto h = dot(r.direction(), oc);
-            auto c = oc.length_squared() - radius*radius;
-
-            auto discriminant = h*h - a*c;
-            if (discriminant < 0) {
-                return false;
-            }
-
-            auto sqrtd = std::sqrt(discriminant);
-
-            // Find the nearest root that lies in the acceptable range.
-            auto root = (h-sqrtd) / a;
-            if (root <= ray_tmin || ray_tmax <= root) {
-                root = (h+sqrtd) / a;
-                if (root <= ray_tmin || ray_tmax <= root)
-                    return false;
-            }
-
-            rec.t = root;
-            rec.p = r.at(rec.t);
-            rec.normal = unit_vector(rec.p - center);
-            rec.set_face_normal(r, rec.normal);
-            rec.shaderPointer = shader;
-            rec.r = r;
-
-            return true;
-        }
+        bool intersect(const ray& r, float ray_tmin, float ray_tmax, hit_record& rec) const override;
         
     private:
         point3 center;

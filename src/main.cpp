@@ -3,14 +3,17 @@
 #include "PerspectiveCamera.h"
 #include "Sphere.h"
 #include "Ray.h"
-#include "triangle.h"
+#include "Triangle.h"
 #include "Scene.h"
 #include "Light.h"
 #include "Lambertian.h"
 #include "BlinnPhong.h"
-#include "Mirror.h"
+#include "MirrorShader.h"
+#include "DiffuseShader.h"
 #include <memory>
 #include <random>
+#include "handleGraphicsArgs.h"
+
 
 float randomOffset() {
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -18,17 +21,23 @@ float randomOffset() {
     return distribution(generator);
 }
 
-int main() {
-    int nx = 50;
-    int ny = 50;
+int main(int argc, char* argv[]) {
+    sivelab::GraphicsArgs args;
+    args.process(argc, argv);
+    int nx = (args.width > 0) ? args.width : 100;
+    int ny = (args.height > 0) ? args.height : 100;
     Framebuffer fb(nx, ny);
     
-    PerspectiveCamera cam(nx, ny, 1.5f);
+    float focalLength = args.useDepthOfField ? args.depthOfFieldDistance : 1.0f;
+    PerspectiveCamera cam(nx, ny, focalLength);
     
     Scene world;
-    
+
     Light light(vec3(20.0, 10.0, 5.0), vec3(1.0, 1.0, 1.0));
-    int rpp_NSquare = 4;
+
+    int rpp_NSquare = (args.rpp > 0) ? args.rpp : 4;
+
+    int recursionDepth = (args.recursionDepth > 0) ? args.recursionDepth : 10;
 
     fb.clearToColor(color(0.0, 0.0, 0.0));
     for (int j = 0; j < ny; ++j) {
@@ -53,13 +62,26 @@ int main() {
     world.add(std::make_shared<Sphere>(point3(0, 0, -10), 3));
     world.add(std::make_shared<Sphere>(point3(0, 0, -15), 5));
 
-     for (int x=0; x<fb.get_width(); ++x) {
-        for (int y=0; y<fb.get_height(); ++y) {
-            ray r;
-            cam.generateRay(x, y, r);
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
+            color c(0.0, 0.0, 0.0);
 
-            color c = world.computeRayColor(r, 1.0, INFINITY, light, 10);
+            for (int p=0; p<rpp_NSquare; ++p) {
+                for (int q=0; q<rpp_NSquare; ++q) {
+                    float tmin = 1.0;
+                    float tmax = std::numeric_limits<float>::infinity();
+                    
+                    float pOffset = (p + randomOffset())/ rpp_NSquare;
+                    float qOffset = (q + randomOffset())/ rpp_NSquare;
 
+                    ray r;
+                    cam.generateRay(x + pOffset, y + qOffset, r);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+
+                }
+            }
+
+            c /= (rpp_NSquare * rpp_NSquare);
             fb.setPixelColor(x, y, c);
         }
     }
@@ -78,13 +100,26 @@ int main() {
     world.add(std::make_shared<Triangle>(point3(0.773205, -0.93923, -7), point3(0.0330127, 0.94282, -5), point3(-0.45, 0.779423, -5), BlinnPhongShaderTri));
     world.add(std::make_shared<Triangle>(point3(0.426795, 1.13923, -7), point3(-0.833013, -0.44282, -5), point3(-0.45, -0.779423, -5)));
     
-    for (int x=0; x<fb.get_width(); ++x) {
-        for (int y=0; y<fb.get_height(); ++y) {
-            ray r;
-            cam.generateRay(x, y, r);
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
+            color c(0.0, 0.0, 0.0);
 
-            color c = world.computeRayColor(r, 1.0, INFINITY, light, 10);
+            for (int p=0; p<rpp_NSquare; ++p) {
+                for (int q=0; q<rpp_NSquare; ++q) {
+                    float tmin = 1.0;
+                    float tmax = std::numeric_limits<float>::infinity();
+                    
+                    float pOffset = (p + randomOffset())/ rpp_NSquare;
+                    float qOffset = (q + randomOffset())/ rpp_NSquare;
 
+                    ray r;
+                    cam.generateRay(x + pOffset, y + qOffset, r);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+
+                }
+            }
+
+            c /= (rpp_NSquare * rpp_NSquare);
             fb.setPixelColor(x, y, c);
         }
     
@@ -95,7 +130,7 @@ int main() {
 
     shared_ptr<Shader> lambertShader = make_shared<Lambertian>(color(115.0/255.0, 192.0/255.0, 209.0/255.0));
     shared_ptr<Shader> BlinnPhongShader = make_shared<BlinnPhong>(color(115.0/255.0, 192.0/255.0, 209.0/255.0));
-    shared_ptr<Shader> mirrorShader = make_shared<Mirror>();
+    shared_ptr<Shader> mirrorShader = make_shared<MirrorShader>();
 
     shared_ptr<Sphere> sphere = make_shared<Sphere>(point3(2.5, 0.0, -40.0), 2.0, BlinnPhongShader);
     shared_ptr<Sphere> sphere2 = make_shared<Sphere>(point3(12.5, 2.0, -50.0), 4.0, lambertShader);
@@ -110,8 +145,8 @@ int main() {
     //world.add(sphere4);
     world.add(triangle1);
 
-    for (int x=0; x<fb.get_width(); ++x) {
-        for (int y=0; y<fb.get_height(); ++y) {
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
             color c(0.0, 0.0, 0.0);
 
             for (int p=0; p<rpp_NSquare; ++p) {
@@ -124,7 +159,7 @@ int main() {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, 10);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
 
                 }
             }
@@ -147,26 +182,8 @@ int main() {
     shared_ptr<Triangle> triangle5 = make_shared<Triangle>(point3(0.0, -7.5, 30.0), point3(500.0, -7.5, -1000.0), point3(-500.0, -7.5, -1000.0), lambertShaderTri);
     world.add(triangle5);
     
-    for (int x=0; x<fb.get_width(); ++x) {
-        for (int y=0; y<fb.get_height(); ++y) {
-            ray r;
-            cam.generateRay(x, y, r);
-
-            color c = world.computeRayColor(r, 1.0, INFINITY, light, 8);
-
-            fb.setPixelColor(x, y, c);
-        }
-    }
-
-    fb.exportToPNG("Testing_mirror");
-
-    world.clear();
-
-    shared_ptr<Sphere> sphere9 = make_shared<Sphere>(point3(0.0, 0.0, -10.0), 1.0, lambertShader);
-    world.add(sphere9);
-
-    for (int x=0; x<fb.get_width(); ++x) {
-        for (int y=0; y<fb.get_height(); ++y) {
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
             color c(0.0, 0.0, 0.0);
 
             for (int p=0; p<rpp_NSquare; ++p) {
@@ -179,7 +196,38 @@ int main() {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, 10);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+
+                }
+            }
+
+            c /= (rpp_NSquare * rpp_NSquare);
+            fb.setPixelColor(x, y, c);
+        }
+    }
+
+    fb.exportToPNG("Testing_mirror");
+
+    world.clear();
+
+    shared_ptr<Sphere> sphere9 = make_shared<Sphere>(point3(0.0, 0.0, -10.0), 1.0, lambertShader);
+    world.add(sphere9);
+
+    for (int y=0; y<fb.get_height(); ++y) {
+        for (int x=0; x<fb.get_width(); ++x) {
+            color c(0.0, 0.0, 0.0);
+
+            for (int p=0; p<rpp_NSquare; ++p) {
+                for (int q=0; q<rpp_NSquare; ++q) {
+                    float tmin = 1.0;
+                    float tmax = std::numeric_limits<float>::infinity();
+                    
+                    float pOffset = (p + randomOffset())/ rpp_NSquare;
+                    float qOffset = (q + randomOffset())/ rpp_NSquare;
+
+                    ray r;
+                    cam.generateRay(x + pOffset, y + qOffset, r);
+                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
 
                 }
             }
@@ -190,7 +238,6 @@ int main() {
     }
 
     fb.exportToPNG("Testing_antialiasing");
-
     
     return 0;
 }

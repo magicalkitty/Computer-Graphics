@@ -5,15 +5,21 @@ add_library (cs4212-util
   framebuffer.cpp framebuffer.h
   ray.h
   main.cpp
-  Sphere.h
-  Triangle.h
-  Camera.h
-  Scene.h
+  Sphere.cpp Sphere.h
+  Triangle.cpp Triangle.h
+  Camera.cpp Camera.h
+  PerspectiveCamera.cpp PerspectiveCamera.h
+  Scene.cpp Scene.h
+  # RayTracer.cpp RayTracer.h
   Light.h
   Shader.h
-  Lambertian.h
-  BlinnPhong.h
-  Mirror.h)
+  Lambertian.cpp Lambertian.h
+  BlinnPhong.cpp BlinnPhong.h
+  NormalShader.cpp NormalShader.h
+  MirrorShader.cpp MirrorShader.h
+  # DiffuseShader.cpp DiffuseShader.h
+  # Random.cpp Random.h
+  )
 
 target_compile_definitions(cs4212-util PUBLIC HAS_GLM)
 target_link_libraries(cs4212-util PRIVATE Boost::program_options)

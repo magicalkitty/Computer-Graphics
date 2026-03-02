@@ -5,9 +5,11 @@
 #include "Ray.h"
 #include "Light.h"
 #include <memory>
+using color = vec3;
 
 struct hit_record;
 class Scene;
+class Light;
 
 class Shader {
     public:
