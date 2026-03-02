@@ -8,6 +8,8 @@ class PerspectiveCamera : public Camera{
 
     PerspectiveCamera(int nx, int ny, float fov);
 
+    PerspectiveCamera(vec3 position, int nx, int ny, float fov);
+
     PerspectiveCamera(vec3 position, vec3 viewDir, int nx, int ny, float fov);
 
     ray generateRay(float i, float j, ray &r0) override;

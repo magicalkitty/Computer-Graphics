@@ -6,6 +6,7 @@
 #include "../Scene.h"
 #include "../triangle.h"
 #include "../Lambertian.h"
+#include "../BlinnPhong.h"
 #include "../../renderlib/vec3.h"
 #include <chrono>
 
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
     int ny = 600;
     Framebuffer fb(nx, ny);
     
-    PerspectiveCamera cam(vec3(0.0, 0.0, 5.0), vec3(0.0, 0.0, 0.0), nx, ny, 1.0f);
+    PerspectiveCamera cam(vec3(0.0, 0.0, 5.0), nx, ny, 1.0f);
     
     Scene world;
 
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
     std::cout << "Interpreted as Vertices: " << numVertices << std::endl;
     int numTriangles = numVertices / 3;
     std::cout << "Interpreted as Triangles: " << numTriangles << std::endl;
-    std::shared_ptr<Shader> lambertShaderTri = std::make_shared<Lambertian>(color(245.0/255.0, 147.0/255.0, 227.0/255.0));
+    std::shared_ptr<Shader> lambertShaderTri = std::make_shared<BlinnPhong>(color(245.0/255.0, 147.0/255.0, 227.0/255.0));
 
     for (int i = 0; i + 8 < allFloats.size(); i += 9) {
         
@@ -84,7 +85,5 @@ int main(int argc, char* argv[])
     std::chrono::duration<double> elapsedSeconds = endTime - startTime;
     std::cout << "Render time: " << elapsedSeconds.count() << " seconds\n";
     // fb.exportToPNG("triangleChallenge_output");
-    printf("Done!");
     fb.exportToPNG("triangleChallenge_output_omp");
-    printf("Exported!");
 }

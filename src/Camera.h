@@ -10,6 +10,8 @@ class Camera {
 
     Camera(int pixel_nx, int pixel_ny);
 
+    Camera(vec3 position, int pixel_nx, int pixel_ny);
+
     Camera(vec3 position, vec3 viewDir, vec3 upDir, int pixel_nx, int pixel_ny);
 
     virtual ~Camera() {}

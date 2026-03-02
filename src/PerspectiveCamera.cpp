@@ -21,6 +21,17 @@ PerspectiveCamera::PerspectiveCamera(int nx, int ny, float fov)
     t = imageplane_height/2.0f; 
 }
 
+PerspectiveCamera::PerspectiveCamera(vec3 position, int nx, int ny, float fov)
+    : Camera(position, nx, ny)
+    {
+        focallength = fov;
+
+        l = -imageplane_width/2.0f; 
+        r = imageplane_width/2.0f; 
+        b = -imageplane_height/2.0f;
+        t = imageplane_height/2.0f; 
+    }
+
 PerspectiveCamera::PerspectiveCamera(vec3 position, vec3 viewDir, int nx, int ny, float fov)
     : Camera(position, viewDir, vec3(0, 1, 0), nx, ny)
 {
