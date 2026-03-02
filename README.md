@@ -126,6 +126,24 @@ Then, when you restart your terminals, you should be able to run the vcpkg progr
 vcpkg
 ```
 
+# Running the code with command-line arguments
+
+### Building 
+
+To build this project, run the following commands:
+```
+cd buildVCPkg
+cmake --build .
+```
+
+### Running
+
+After building this project in `buildVCPkg`, run the excetutable with optional arguments to control rendering settings:
+```
+./src/Debug/main.exe [--width image_width] [--height image_height] [--rpp rays_per_pixel] [--recursionDepth max_depth] [--useDepthOfField focallength]
+```
+
+
 # Running Unit Tests
 This project includes unit tests for the vec3, ray, and sphere class using Catch2. After building the project successfully in the build directory, run the selected unit tests by navigating to the test executable directory and executing it. 
 
