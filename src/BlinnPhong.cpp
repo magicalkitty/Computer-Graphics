@@ -4,6 +4,10 @@
 BlinnPhong::BlinnPhong(const color& diffuseColor, float exponent)
     : diffuseColor(diffuseColor), phongExp(exponent) {}
 
+BlinnPhong::BlinnPhong(const color& diffuseColor, const color& specularColor, float exponent)
+    : diffuseColor(diffuseColor), specularColor(specularColor), phongExp(exponent) {}
+
+
 color BlinnPhong::rayColor(const Scene& world, const hit_record& hit, const Light& light, int depth) const
 {
     if (world.shadowChecker(hit, 0.001, 1.0, light)) {
@@ -18,7 +22,6 @@ color BlinnPhong::rayColor(const Scene& world, const hit_record& hit, const Ligh
     vec3 halfVec = unit_vector(lightDir + viewDir);
     float nDotH = std::max(0.0f, float(dot(hit.normal, halfVec)));
     float specFactor = std::pow(nDotH, phongExp);
-    vec3 specular(specFactor, specFactor, specFactor);
-
+    vec3 specular = specularColor * specFactor;
     return diffuse + specular * light.getColor();
 }

@@ -7,6 +7,7 @@
 #include "../triangle.h"
 #include "../Lambertian.h"
 #include "../BlinnPhong.h"
+#include "../NormalShader.h"
 #include "../../renderlib/vec3.h"
 #include <chrono>
 
@@ -55,7 +56,8 @@ int main(int argc, char* argv[])
     std::cout << "Interpreted as Vertices: " << numVertices << std::endl;
     int numTriangles = numVertices / 3;
     std::cout << "Interpreted as Triangles: " << numTriangles << std::endl;
-    std::shared_ptr<Shader> lambertShaderTri = std::make_shared<BlinnPhong>(color(245.0/255.0, 147.0/255.0, 227.0/255.0));
+    //std::shared_ptr<Shader> lambertShaderTri = std::make_shared<BlinnPhong>(color(245.0/255.0, 147.0/255.0, 227.0/255.0));
+    std::shared_ptr<Shader> normalShader = std::make_shared<NormalShader>();
 
     for (int i = 0; i + 8 < allFloats.size(); i += 9) {
         
@@ -63,7 +65,7 @@ int main(int argc, char* argv[])
         vec3 v2(allFloats[i+3], allFloats[i+4], allFloats[i+5]);
         vec3 v3(allFloats[i+6], allFloats[i+7], allFloats[i+8]);
         
-        world.add(std::make_shared<Triangle>(v1, v2, v3, lambertShaderTri));
+        world.add(std::make_shared<Triangle>(v1, v2, v3, normalShader));
         
     }
     
@@ -85,5 +87,5 @@ int main(int argc, char* argv[])
     std::chrono::duration<double> elapsedSeconds = endTime - startTime;
     std::cout << "Render time: " << elapsedSeconds.count() << " seconds\n";
     // fb.exportToPNG("triangleChallenge_output");
-    fb.exportToPNG("triangleChallenge_output_omp");
+    fb.exportToPNG("triangleChallenge_normal_output_omp");
 }
