@@ -24,7 +24,7 @@ vec3 DiffuseShader::random_in_unit_sphere() const
   return unit_vector(randomDir);
 }
 
-color DiffuseShader::rayColor(const Scene& world, const hit_record &hit, const Light& light, int depth) const
+color DiffuseShader::rayColor(const Scene& world, const hit_record &hit, int depth) const
 {
   if (depth <= 0) {
     return vec3(0, 0, 0);
@@ -40,7 +40,7 @@ color DiffuseShader::rayColor(const Scene& world, const hit_record &hit, const L
 
   ray scatteredRay(hit.p, scatterDirection);
 
-  vec3 scatteredColor = world.computeRayColor(scatteredRay, 0.001, floatMax, light, depth);
+  vec3 scatteredColor = world.computeRayColor(scatteredRay, 0.001, floatMax, depth);
 
   return diffuseColor * scatteredColor;
 }

@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
 
   Framebuffer fb(nx, ny);
 
+  
   int rpp_NSquare = (args.rpp > 0) ? args.rpp : 4;
   int recursionDepth = (args.recursionDepth > 0) ? args.recursionDepth : 10;
 
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]) {
   
   Scene world;
 
-  fb.clearToColor(color(0.0, 0.0, 0.0));
+  fb.clearToColor(color(1.0, 1.0, 1.0));
   
   /* ---- Set up camera ---- */
   auto cameraPtr = scene.getCameras()[0];
@@ -80,33 +81,35 @@ int main(int argc, char *argv[]) {
     world.add(shape);
   }
 
-  Light light = *(scene.getLights()[0]);
+  for (auto &light : scene.getLights()) {
+    world.addLight(light);
+  }
 
   /* ---- Rendering Loop ---- */
   #pragma omp parallel for schedule(dynamic)
   for (int y=0; y<fb.get_height(); ++y) {
     printf("Still rendering... %d%%\n", (y * 100) / fb.get_height());
     for (int x=0; x<fb.get_width(); ++x) {
-        //color c(0.0, 0.0, 0.0);
+        color c(0.0, 0.0, 0.0);
 
-        // for (int p=0; p<rpp_NSquare; ++p) {
-        //     for (int q=0; q<rpp_NSquare; ++q) {
+        for (int p=0; p<rpp_NSquare; ++p) {
+            for (int q=0; q<rpp_NSquare; ++q) {
                 float tmin = 1.0;
                 float tmax = std::numeric_limits<float>::infinity();
                 
-                // float pOffset = (p + randomOffset())/ rpp_NSquare;
-                // float qOffset = (q + randomOffset())/ rpp_NSquare;
+                float pOffset = (p + randomOffset())/ rpp_NSquare;
+                float qOffset = (q + randomOffset())/ rpp_NSquare;
 
                 ray r;
-                //cam->generateRay(x + pOffset, y + qOffset, r);
-                // c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
-                cam->generateRay(x, y, r);
-                color c = world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                cam->generateRay(x + pOffset, y + qOffset, r);
+                c += world.computeRayColor(r, tmin, tmax, recursionDepth);
+                // cam->generateRay(x, y, r);
+                // color c = world.computeRayColor(r, tmin, tmax, light, recursionDepth);
 
-            // }
-        // }
+            }
+        }
 
-    //     c /= (rpp_NSquare * rpp_NSquare);
+        c /= (rpp_NSquare * rpp_NSquare);
         fb.setPixelColor(x, y, c);
       }
     }

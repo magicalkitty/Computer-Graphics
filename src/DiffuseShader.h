@@ -12,7 +12,7 @@ public:
 
     vec3 random_in_unit_sphere() const;
 
-    color rayColor(const Scene& world, const hit_record& hit, const Light& light, int depth) const override;
+    color rayColor(const Scene& world, const hit_record& hit, int depth) const override;
 
 private:
     color diffuseColor;

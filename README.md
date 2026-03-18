@@ -136,6 +136,12 @@ cd buildVCPkg
 cmake --build .
 ```
 
+or to use Release to get a faster runtime:
+```
+cd buildVCPkg
+cmake --build . --config Release
+```
+
 ### Running
 
 After building this project in `buildVCPkg`, run the excetutable with optional arguments to control rendering settings:

@@ -5,8 +5,14 @@ Scene::Scene() {}
 
 Scene::Scene(shared_ptr<hittable> object) { add(object); }
 
+Scene::Scene(shared_ptr<Light> light) { addLight(light); }
+
 void Scene::add(shared_ptr<hittable> object) {
     objects.push_back(object);
+}
+
+void Scene::addLight(shared_ptr<Light> light) {
+    lights.push_back(light);
 }
 
 bool Scene::intersect(const ray& r, float ray_tmin, float ray_tmax, hit_record& rec) const
@@ -42,7 +48,7 @@ bool Scene::shadowChecker(const hit_record& rec, float tmin, float tmax, const L
     return false; // visible --> no shadow!
 }
 
-color Scene::computeRayColor(const ray& r, float tmin, float tmax, const Light& light, int depth) const
+color Scene::computeRayColor(const ray& r, float tmin, float tmax, int depth) const
 {
     if (depth <= 0) {
         return backgroundColor;
@@ -66,7 +72,7 @@ color Scene::computeRayColor(const ray& r, float tmin, float tmax, const Light& 
             ? rec.shaderPointer
             : std::make_shared<NormalShader>();
 
-        color c = shader->rayColor(*this, rec, light, depth - 1);
+        color c = shader->rayColor(*this, rec, depth - 1);
         return c;
     
     }

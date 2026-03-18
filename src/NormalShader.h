@@ -10,5 +10,5 @@ using color = vec3;
 
 class NormalShader : public Shader {
     public:
-        color rayColor(const Scene& world, const hit_record& hit, const Light& light, int depth) const override;
+        color rayColor(const Scene& world, const hit_record& hit, int depth) const override;
 };

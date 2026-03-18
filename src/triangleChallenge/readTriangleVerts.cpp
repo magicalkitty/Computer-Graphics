@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
             ray r;
             cam.generateRay(x, y, r);
 
-            color c = world.computeRayColor(r, 1.0, INFINITY, light, 10);
+            color c = world.computeRayColor(r, 1.0, INFINITY, 10);
 
             fb.setPixelColor(x, y, c);
         }

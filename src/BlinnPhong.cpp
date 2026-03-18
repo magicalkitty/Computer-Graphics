@@ -8,20 +8,25 @@ BlinnPhong::BlinnPhong(const color& diffuseColor, const color& specularColor, fl
     : diffuseColor(diffuseColor), specularColor(specularColor), phongExp(exponent) {}
 
 
-color BlinnPhong::rayColor(const Scene& world, const hit_record& hit, const Light& light, int depth) const
+color BlinnPhong::rayColor(const Scene& world, const hit_record& hit, int depth) const
 {
-    if (world.shadowChecker(hit, 0.001, 1.0, light)) {
-        return color(0.0, 0.0, 0.0);
-    }
-    
+    color finalColor(0.0, 0.0, 0.0);
     Lambertian lambert(diffuseColor);
-    color diffuse = lambert.rayColor(world, hit, light, depth);
-
-    vec3 lightDir = unit_vector(light.getPosition() - hit.p);
-    vec3 viewDir = unit_vector(-hit.r.direction());
-    vec3 halfVec = unit_vector(lightDir + viewDir);
-    float nDotH = std::max(0.0f, float(dot(hit.normal, halfVec)));
-    float specFactor = std::pow(nDotH, phongExp);
-    vec3 specular = specularColor * specFactor;
-    return diffuse + specular * light.getColor();
+    color diffuse = lambert.rayColor(world, hit, depth);
+    
+    for (const auto& lightPtr : world.getLights()) {
+        const auto& light = *lightPtr; // dereference
+        
+        if (!world.shadowChecker(hit, 0.001, 1.0, light)) {
+            vec3 lightDir = unit_vector(light.getPosition() - hit.p);
+            vec3 viewDir = unit_vector(-hit.r.direction());
+            vec3 halfVec = unit_vector(lightDir + viewDir);
+            float nDotH = std::max(0.0f, float(dot(hit.normal, halfVec)));
+            float specFactor = std::pow(nDotH, phongExp);
+            vec3 specular = specularColor * specFactor * light.getColor();
+            finalColor += specular;
+        }
+    }
+    finalColor += diffuse;
+    return finalColor;
 }

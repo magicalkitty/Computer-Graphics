@@ -35,6 +35,8 @@ int main(int argc, char* argv[]) {
 
     Light light(vec3(20.0, 10.0, 5.0), vec3(1.0, 1.0, 1.0));
 
+    world.addLight(std::make_shared<Light>(light));
+
     int rpp_NSquare = (args.rpp > 0) ? args.rpp : 4;
 
     int recursionDepth = (args.recursionDepth > 0) ? args.recursionDepth : 10;
@@ -79,7 +81,7 @@ int main(int argc, char* argv[]) {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                    c += world.computeRayColor(r, tmin, tmax, recursionDepth);
 
                 }
             }
@@ -108,7 +110,7 @@ int main(int argc, char* argv[]) {
 
             ray r;
             cam.generateRay(x, y, r);
-            color c = world.computeRayColor(r, 1.0, INFINITY, light, recursionDepth);
+            color c = world.computeRayColor(r, 1.0, INFINITY, recursionDepth);
 
             fb.setPixelColor(x, y, c);
         }
@@ -149,7 +151,7 @@ int main(int argc, char* argv[]) {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                    c += world.computeRayColor(r, tmin, tmax, recursionDepth);
 
                 }
             }
@@ -186,7 +188,7 @@ int main(int argc, char* argv[]) {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                    c += world.computeRayColor(r, tmin, tmax, recursionDepth);
 
                 }
             }
@@ -217,7 +219,7 @@ int main(int argc, char* argv[]) {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                    c += world.computeRayColor(r, tmin, tmax, recursionDepth);
 
                 }
             }
@@ -313,7 +315,7 @@ int main(int argc, char* argv[]) {
 
                     ray r;
                     cam.generateRay(x + pOffset, y + qOffset, r);
-                    c += world.computeRayColor(r, tmin, tmax, light, recursionDepth);
+                    c += world.computeRayColor(r, tmin, tmax, recursionDepth);
 
                 }
             }

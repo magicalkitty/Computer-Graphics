@@ -81,40 +81,42 @@ public:
   void addShader(const ISceneLoader::ShaderDesc &shaderDesc) override {
     std::cout << "Creating shader: type=" << shaderDesc.type << std::endl;
     // I place my shaders on an unordered map often
-    std::shared_ptr<Shader> shader;
+    std::shared_ptr<Shader> shaderPtr;
 
     if (shaderDesc.type == "Lambertian") {
       vec3 diffuse(shaderDesc.diffuse.data.x, shaderDesc.diffuse.data.y, shaderDesc.diffuse.data.z);
-      shader = std::make_shared<Lambertian>(diffuse);
+      shaderPtr = std::make_shared<Lambertian>(diffuse);
     }
 
     else if (shaderDesc.type == "BlinnPhong") {
       vec3 diffuse(shaderDesc.diffuse.data.x, shaderDesc.diffuse.data.y, shaderDesc.diffuse.data.z);
       vec3 specular(shaderDesc.specular.data.x, shaderDesc.specular.data.y, shaderDesc.specular.data.z);
-      shader = std::make_shared<BlinnPhong>(diffuse, specular, shaderDesc.phongExp);
+      shaderPtr = std::make_shared<BlinnPhong>(diffuse, specular, shaderDesc.phongExp);
     }
 
     else if (shaderDesc.type == "NormalShader") {
-      shader = std::make_shared<NormalShader>();
+      shaderPtr = std::make_shared<NormalShader>();
     }
 
     else if (shaderDesc.type == "Mirror") {
-      shader = std::make_shared<MirrorShader>();
+      shaderPtr = std::make_shared<MirrorShader>();
     }
 
     else {
-      shader = std::make_shared<NormalShader>();
+      shaderPtr = std::make_shared<NormalShader>();
     }
 
-    shaderMap[shaderDesc.name] = shader;
+    shaderMap[shaderDesc.name] = shaderPtr;
 
   }
   void addShape(const ISceneLoader::ShapeDesc &shapeDesc) override {
     std::cout << "Creating shape: type=" << shapeDesc.type << std::endl;
+
     std::shared_ptr<Shader> shader = nullptr;
     if (!shapeDesc.shaderNameReference.empty()) {
       std::cout << "shaderNameReference='" << shapeDesc.shaderNameReference << "'" << std::endl;
       shader = shaderMap[shapeDesc.shaderNameReference];
+      printf("Found shader reference! %s\n", shapeDesc.shaderNameReference.c_str());
     }
     if (shapeDesc.type == "sphere") {
       vec3 center(shapeDesc.center.x, shapeDesc.center.y, shapeDesc.center.z);

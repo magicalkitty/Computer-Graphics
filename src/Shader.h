@@ -14,5 +14,5 @@ class Light;
 class Shader {
     public:
         virtual ~Shader()  = default;
-        virtual color rayColor( const Scene& world, const hit_record& hit, const Light& light, int depth = 10) const = 0;
+        virtual color rayColor( const Scene& world, const hit_record& hit, int depth = 10) const = 0;
 };
