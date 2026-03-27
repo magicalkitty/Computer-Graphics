@@ -3,6 +3,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable (glfwExample
   glfwExample.cpp 
   GLSL.cpp GLSL.h
+  ../src/Camera.cpp ../src/Camera.h
+  ../src/PerspectiveCamera.cpp ../src/PerspectiveCamera.h
 )
 
 target_link_libraries (glfwExample PRIVATE GLEW::GLEW)

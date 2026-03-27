@@ -1,4 +1,7 @@
 #include "PerspectiveCamera.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 PerspectiveCamera::PerspectiveCamera() : Camera() 
 {
@@ -51,4 +54,13 @@ ray PerspectiveCamera::generateRay(float i, float j, ray &r0)
     r0 = ray(position, dir);
 
     return r0;
+}
+
+PerspectiveCamera::PerspectiveCamera(glm::vec3 position, glm::vec3 viewDir, int nx, int ny, float fov)
+    : PerspectiveCamera(vec3(position.x, position.y, position.z),
+    vec3(viewDir.x, viewDir.y, viewDir.z), nx, ny, fov) {}
+
+glm::mat4 PerspectiveCamera::getProjectionMatrix() const {
+    float aspectratio = (float)nx/(float)ny;
+    return glm::perspective(glm::radians(focallength), aspectratio, 0.1f, 100.0f);
 }

@@ -3,9 +3,15 @@
 #include <vector>
 #include "../renderlib/vec3.h"
 #include "ray.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class Camera {
     public:
+    vec3 position;
+    vec3 U, V, W;
+
     Camera();
 
     Camera(int pixel_nx, int pixel_ny);
@@ -24,12 +30,17 @@ class Camera {
     // future refactor
     // virtual void generate(float i, float j, ray &r) = 0;
     // virtual ray generate(float i, float j) = 0;
+
+    Camera(glm::vec3 position, glm::vec3 viewDir, glm::vec3 upDir, int pixel_nx, int pixel_ny);
+
+    glm::mat4 getViewMatrix() const;
+
     
     protected:
-        vec3 position;
-
-        // basis vectors for my camera
-        vec3 U, V, W;
+    //     vec3 position;
+    
+    // // basis vectors for my camera
+    //     vec3 U, V, W;
 
         float focallength; //also sometimes "d"
 

@@ -1,4 +1,7 @@
 #include "Camera.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 Camera::Camera()
     : position(0, 0, 0), U(1, 0, 0), V(0, 1, 0), W(0, 0, 1),
@@ -44,4 +47,18 @@ Camera::Camera(vec3 position, vec3 viewDir, vec3 upDir, int pixel_nx, int pixel_
 
     U = unit_vector(cross(t, W));
     V = cross(W, U);
+}
+
+Camera::Camera(glm::vec3 position, glm::vec3 viewDir, glm::vec3 upDir, int pixel_nx, int pixel_ny)
+    : Camera(vec3(position.x, position.y, position.z),
+    vec3(viewDir.x, viewDir.y, viewDir.z),
+    vec3(upDir.x, upDir.y, upDir.z), pixel_nx, pixel_ny) {}
+
+glm::mat4 Camera::getViewMatrix() const {
+    // Create a view matrix for OpenGL
+    glm::vec3 pos(position.x(), position.y(), position.z());
+    glm::vec3 w(W.x(), W.y(), W.z());
+    glm::vec3 v(V.x(), V.y(), V.z());
+
+    return glm::lookAt(pos, pos - w, v);
 }

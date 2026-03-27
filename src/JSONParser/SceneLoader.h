@@ -114,7 +114,6 @@ public:
 
     std::shared_ptr<Shader> shader = nullptr;
     if (!shapeDesc.shaderNameReference.empty()) {
-      std::cout << "shaderNameReference='" << shapeDesc.shaderNameReference << "'" << std::endl;
       shader = shaderMap[shapeDesc.shaderNameReference];
       printf("Found shader reference! %s\n", shapeDesc.shaderNameReference.c_str());
     }

@@ -12,6 +12,8 @@
 
 #include "GLSL.h"
 
+#include "../src/PerspectiveCamera.h"
+
 int CheckGLErrors(const char *s)
 {
     int errCount = 0;
@@ -72,8 +74,20 @@ int main(void)
     //
     // The ortho parameters, in order: left, right, bottom, top, zNear, zFar
     float halfWidth = 15.0 / 2.0;
-    float halfHeight = halfWidth / aspectRatio;
-    glm::mat4 projectionMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.0f, 10.0f);
+    float halfHeight = halfWidth; // / aspectRatio;
+
+    float left = -halfWidth;
+    float right = halfWidth;
+
+    float bottom = -halfHeight;
+    float top = halfHeight;
+
+    float near = 10.0f;
+    float far = -10.0f;
+
+    // glm::mat4 projectionMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.0f, 10.0f);
+    // glm::mat4 M_ortho = glm::ortho(left, right, bottom, top, near, far);
+    glm::mat4 perspMat = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
 
     GLint major_version;
     glGetIntegerv(GL_MAJOR_VERSION, &major_version);
@@ -98,10 +112,30 @@ int main(void)
 
     // this is the actual triangle data that will be copied to                                              
     // the GPU memory                                                                                       
-    std::vector< float > host_VertexBuffer{ -0.8f, -0.2f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
-                                            0.2f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
-                                            0.6f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f // color 2
-                                        };                                   
+    std::vector< float > host_VertexBuffer{ 
+                                            -3.0f, -3.0f, 0.0f, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f,
+                                            3.0f, -3.0f, 0.0f, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f,
+                                            0.0f, 3.0f, 0.0f, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f
+                                        };
+
+    //                                        -0.8f, -0.2f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
+    //                                         0.2f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
+    //                                         0.6f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f, // color 2
+
+
+                                            // 0.6f, -0.5f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
+                                            // 0.8f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
+                                            // 1.0f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f // color 2
+                                        // };       
+                                        
+    // std::vector<float> allMYVVerts;
+
+    // for (all triangle in shape) {
+    //     for (all vertices in my triangle) {
+    //     allMYVerts.push_back(vert.x);
+    //     allMYVerts.push_back(vert.y);
+    //     allMYVerts.push_back(vert.z);
+    // }
 
     int numBytes = host_VertexBuffer.size() * sizeof(float);
 
@@ -132,10 +166,24 @@ int main(void)
     glBindVertexArray(0);
     
     // Create a shader using my GLSLObject class                                                            
-    // sivelab::GLSLObject shader;
-    shader.addShader( "vertexShader_passthrough.glsl", sivelab::GLSLObject::VERTEX_SHADER );
+    shader.addShader( "vertexShader_withMatrixTransformation.glsl", sivelab::GLSLObject::VERTEX_SHADER );
     shader.addShader( "fragmentShader_passthrough.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
     shader.createProgram();
+
+    GLuint projMatrixID, viewMatrixID, modelMatrixID;
+    projMatrixID = shader.createUniform("projMatrix");
+    viewMatrixID = shader.createUniform("viewMatrix");
+    modelMatrixID = shader.createUniform("modelMatrix");
+
+    // Set the identity matrix and then set the rotation M = rot * M
+    glm::mat4 modelTransform = glm::mat4 (1.0);
+    float rotAngle = 0.0f;
+    modelTransform = glm::rotate(modelTransform , rotAngle , glm::vec3(0, 1, 0));
+
+    // glm::vec3 m_pos(0,0,0), m_viewDir(0,0,-1);
+    // glm::vec3 m_U(1,0,0), m_V(0,1,0), m_W(0,0,1);
+
+    PerspectiveCamera cam(glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,-1.0f), 800, 600, 45.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -148,12 +196,38 @@ int main(void)
         // background color)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /* Render your objects here */
+        // Calculate the model
+        // glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0,0,-2));
+        // glm::mat4 view = glm::mat4(1.0f);
+        // glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.33f, 0.1f, 100.0f);
+        // glm::mat4 mvp = projection * view * model;
+        
+        // create the view matrix from our camera data                                                                                                   
+        glm::mat4 M_view = cam.getViewMatrix();
+        glm::mat4 M_proj = cam.getProjectionMatrix();
+
         /* Render your objects here */
         shader.activate();
+        glm::mat4 modelTransform = glm::mat4 (1.0);
+
+        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 1));
+
+        rotAngle += 0.0001f;
+        if (rotAngle > 2.0 * 3.14159f) {
+            rotAngle = 0.0f;
+        }
+
+
+        // copy from the host to the device the view matrix and the projection matrix                                                                                       
+        // glUniformMatrix4fv(projMatrixID, 1, GL_FALSE, glm::value_ptr( M_ortho ));
+        glUniformMatrix4fv(projMatrixID , 1, GL_FALSE , glm:: value_ptr( M_proj ));
+        glUniformMatrix4fv(viewMatrixID, 1, GL_FALSE, glm::value_ptr( M_view ));
+        glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, glm::value_ptr(modelTransform));
+
         glBindVertexArray(m_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
+
         shader.deactivate();
         // Swap the front and back buffers
         glfwSwapBuffers(window);
@@ -161,8 +235,23 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
 
-        if (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS) {
-            std::cout << "fps: " << 1.0/timeDiff << std::endl;
+        float moveRatePerFrame = 0.005;
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        cam.position = cam.position - cam.W * moveRatePerFrame;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        cam.position = cam.position - cam.U * moveRatePerFrame;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        cam.position = cam.position + cam.W * moveRatePerFrame;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        cam.position = cam.position + cam.U * moveRatePerFrame;
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+        std::cout << "fps: " << 1.0 / timeDiff << std::endl;
         }
         if (glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, 1);
