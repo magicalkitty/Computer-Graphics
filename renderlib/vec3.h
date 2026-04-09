@@ -15,6 +15,10 @@ class vec3 {
     double y() const { return e[1]; }
     double z() const { return e[2]; }
 
+    void set_x(double x) { e[0] = x; }
+    void set_y(double y) { e[1] = y; }
+    void set_z(double z) { e[2] = z; }
+
     vec3 operator-() const {return vec3(-e[0], -e[1], -e[2]); }
     double operator[](int i) const {return e[i];}
     double& operator[](int i) {return e[i]; }

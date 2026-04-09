@@ -4,6 +4,7 @@
 #include "ray.h"
 #include <memory>
 #include "Shader.h"
+#include "BoundingBox.h"
 
 using color = vec3;
 
@@ -40,6 +41,16 @@ class hittable {
         std::shared_ptr<Shader> shader;
 
         virtual bool intersect(const ray& r, float ray_tmin, float ray_tmax, hit_record& rec) const = 0;
+
+        virtual BoundingBox boundingBox() const = 0;
+
+        void provideShader(Shader* shaderPtr) {
+            shader = std::shared_ptr<Shader>(shaderPtr, [](Shader*){});;
+        }
+
+        void provideShaderOwner(Shader* shaderPtr) {
+            shader = std::shared_ptr<Shader>(shaderPtr);
+        }
 };
 
 #endif // HITTABLE_H

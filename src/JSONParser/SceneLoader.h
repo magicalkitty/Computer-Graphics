@@ -15,6 +15,7 @@
 #include "../../renderlib/vec3.h"
 #include "../light.h"
 #include "../Framebuffer.h"
+#include "../OBJMesh.h"
 
 std::unordered_map<std::string, std::shared_ptr<Shader>> shaderMap;
 
@@ -133,6 +134,12 @@ public:
       auto tri = std::make_shared<Triangle>(a, b, c, shader);
 
       m_targetScene.shapes.push_back(tri);
+    }
+
+    else if (shapeDesc.type == "mesh") {
+      auto defaultShader = std::make_shared<NormalShader>();
+      auto sPtr = std::make_shared<OBJMesh>(shapeDesc.meshFilePath, defaultShader.get());
+      m_targetScene.shapes.push_back(sPtr);
     }
   }
   void addTexture(const std::string &type, const std::string &name,

@@ -12,6 +12,7 @@ class Triangle : public hittable {
         std::shared_ptr<Shader> getShader() const { return shader; }
 
         bool intersect(const ray& r, float ray_tmin, float ray_tmax, hit_record& rec) const override;
+        BoundingBox boundingBox() const override;
 
     private:
         point3 a, b, c;

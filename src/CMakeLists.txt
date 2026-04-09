@@ -29,6 +29,9 @@ add_library (cs4212-util
   BlinnPhong.cpp BlinnPhong.h
   NormalShader.cpp NormalShader.h
   MirrorShader.cpp MirrorShader.h
+  OBJMesh.cpp OBJMesh.h
+  BoundingBox.h
+  BoundingVolumeNode.cpp BoundingVolumeNode.h
 )
 
 target_compile_definitions(cs4212-util PUBLIC HAS_GLM)

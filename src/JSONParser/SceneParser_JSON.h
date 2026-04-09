@@ -25,7 +25,7 @@ private:
   void parseTexture(const json &shape);
 
   std::shared_ptr<ISceneLoader> loader;
-
+  std::string pathToSceneFile;
   ISceneLoader::ShaderProperty
   extractShaderProperty(const json &shaderParam,
                         const std::string propertyName);

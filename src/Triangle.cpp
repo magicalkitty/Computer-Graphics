@@ -70,3 +70,11 @@ bool Triangle::intersect(const ray& r, float ray_tmin, float ray_tmax, hit_recor
 
     return true;
 }
+
+BoundingBox Triangle::boundingBox() const {
+    BoundingBox box;
+    box.update(a);
+    box.update(b);
+    box.update(c);
+    return box;
+}

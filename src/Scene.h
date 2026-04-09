@@ -6,6 +6,7 @@
 #include "Light.h"
 #include "../renderlib/vec3.h"
 #include "Framebuffer.h"
+#include "BoundingBox.h"
 
 #include <memory>
 #include <vector>
@@ -38,5 +39,13 @@ class Scene : public hittable {
     bool shadowChecker(const hit_record& rec, float tmin, float tmax, const Light& light) const;
 
     color computeRayColor(const ray& r, float tmin, float tmax, int depth) const;
+
+    BoundingBox boundingBox() const override {
+        BoundingBox box;
+        for (const auto& shape : objects) {
+            box = surroundingBox(box, shape->boundingBox());
+        }
+        return box;
+    }
 };
 #endif // SCENE_H

@@ -1,6 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <memory>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -13,11 +16,60 @@
 #include "GLSL.h"
 
 #include "../src/PerspectiveCamera.h"
+#include "../src/OBJMesh.h"
+#include "../src/BlinnPhong.h"
+#include "../src/Shader.h"
 
 int CheckGLErrors(const char *s)
 {
     int errCount = 0;
     return errCount;
+}
+
+void loadOBJ(const std::string &filename, std::vector<float> &outBuffer)
+{
+    std::ifstream file(filename);
+    std::string line;
+
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string prefix;
+        ss >> prefix;
+
+        if (prefix == "v") {
+            glm::vec3 vertex;
+            ss >> vertex.x >> vertex.y >> vertex.z;
+            vertices.push_back(vertex);
+        }
+        else if (prefix == "vn") {
+            glm::vec3 normal;
+            ss >> normal.x >> normal.y >> normal.z;
+            normals.push_back(normal);
+        }
+        else if (prefix == "f") {
+            for (int i = 0; i < 3; ++i) {
+                std::string vertexStr;
+                ss >> vertexStr;
+
+                int vIndex, nIndex;
+                sscanf(vertexStr.c_str(), "%d//%d", &vIndex, &nIndex);
+                
+                glm::vec3 vert = vertices[vIndex - 1];
+                glm::vec3 norm = normals[nIndex - 1];
+  
+                outBuffer.push_back(vert.x);
+                outBuffer.push_back(vert.y);
+                outBuffer.push_back(vert.z);
+
+                outBuffer.push_back(norm.x);
+                outBuffer.push_back(norm.y);
+                outBuffer.push_back(norm.z);
+            }
+        }
+    }
 }
 
 int main(void)
@@ -113,21 +165,27 @@ int main(void)
     // this is the actual triangle data that will be copied to                                              
     // the GPU memory
 
-    std::vector< float > host_VertexBuffer{ //vertex, normal
-                                            -3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 1.0f, //255.0/255.0f, 172.0/255.0f, 227.0/255.0f,
-                                            3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 1.0f,//117.0/255.0f, 122.0/255.0f, 255.0/255.0f,
-                                            0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,//129.0/255.0f, 255.0/255.0f, 117.0/255.0f
-                                        };
+    std::vector<float> host_VertexBuffer;
+    BlinnPhong* defaultShader = new BlinnPhong(color(230.0/255.0, 126.0/255.0, 219.0/255.0), 64.0f);
+    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\scenes_B\\objFiles\\al.obj", defaultShader);
+    host_VertexBuffer = myMesh.getVertexBuffer();
+    std::cout << "Vertex count: " << myMesh.getVertexBuffer().size() << std::endl;
 
-    //                                        -0.8f, -0.2f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
-    //                                         0.2f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
-    //                                         0.6f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f, // color 2
+    // std::vector< float > host_VertexBuffer{ //vertex, normal
+    //                                         -3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 1.0f, //255.0/255.0f, 172.0/255.0f, 227.0/255.0f,
+    //                                         3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 1.0f,//117.0/255.0f, 122.0/255.0f, 255.0/255.0f,
+    //                                         0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 1.0f,//129.0/255.0f, 255.0/255.0f, 117.0/255.0f
+    //                                     };
+
+    // //                                        -0.8f, -0.2f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
+    // //                                         0.2f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
+    // //                                         0.6f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f, // color 2
 
 
-                                            // 0.6f, -0.5f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
-                                            // 0.8f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
-                                            // 1.0f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f // color 2
-                                        // };       
+    //                                         // 0.6f, -0.5f, 0.0f /* v0 */, 255.0/255.0f, 172.0/255.0f, 227.0/255.0f, // color 0                             
+    //                                         // 0.8f, -0.7f, 0.0f /* v1 */, 117.0/255.0f, 122.0/255.0f, 255.0/255.0f, // color 1
+    //                                         // 1.0f, 0.6f, 0.0f /* v2 */, 129.0/255.0f, 255.0/255.0f, 117.0/255.0f // color 2
+    //                                     // };       
                                         
     // std::vector<float> allMYVVerts;
 
@@ -144,6 +202,8 @@ int main(void)
     // the currently bound VBO                                                                              
     glBufferData(GL_ARRAY_BUFFER, numBytes, host_VertexBuffer.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    int vertexCount = host_VertexBuffer.size() / 6;
 
     // once copied, we no longer need the data on the host                                                  
     host_VertexBuffer.clear();
@@ -167,8 +227,8 @@ int main(void)
     glBindVertexArray(0);
     
     // Create a shader using my GLSLObject class                                                            
-    shader.addShader( "vertexShader_PrepForPerFragment.glsl", sivelab::GLSLObject::VERTEX_SHADER );
-    shader.addShader( "fragmentShader_BlinnPhong.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
+    shader.addShader( "OpenGL\\vertexShader_PrepForPerFragment.glsl", sivelab::GLSLObject::VERTEX_SHADER );
+    shader.addShader( "OpenGL\\fragmentShader_BlinnPhong.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
     shader.createProgram();
 
     GLuint projMatrixID, viewMatrixID, modelMatrixID, lightPosID, normalMatrixID;
@@ -248,7 +308,7 @@ int main(void)
 
         glBindVertexArray(m_VAO);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, myMesh.getVertexBuffer().size() / 6);
         glBindVertexArray(0);
 
         shader.deactivate();

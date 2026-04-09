@@ -18,6 +18,10 @@ class Sphere : public hittable {
         std::shared_ptr<Shader> getShader() const { return shader; }
 
         bool intersect(const ray& r, float ray_tmin, float ray_tmax, hit_record& rec) const override;
+
+        BoundingBox boundingBox() const override {
+            return BoundingBox(center - vec3(radius, radius, radius), center + vec3(radius, radius, radius));
+}
         
     private:
         point3 center;
