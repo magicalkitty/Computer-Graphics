@@ -292,7 +292,7 @@ int main(void)
     // Set the identity matrix and then set the rotation M = rot * M
     glm::mat4 modelTransform = glm::mat4 (1.0);
     float rotAngle = 0.0f;
-    modelTransform = glm::rotate(modelTransform, 0.0f, glm::vec3(0, 1, 0));
+    modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 0));
 
     // glm::vec3 m_pos(0,0,0), m_viewDir(0,0,-1);
     // glm::vec3 m_U(1,0,0), m_V(0,1,0), m_W(0,0,1);
@@ -325,12 +325,12 @@ int main(void)
         shader.activate();
         glm::mat4 modelTransform = glm::mat4 (1.0);
         
-        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(1, 1, 0));
+        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 1));
         
-        // rotAngle += 0.0001f;
-        // if (rotAngle > 2.0 * 3.14159f) {
-        //     rotAngle = 0.0f;
-        // }
+        rotAngle += 0.0001f;
+        if (rotAngle > 2.0 * 3.14159f) {
+            rotAngle = 0.0f;
+        }
         glUniform3f(cameraPosID, cam.position.x(), cam.position.y(), cam.position.z());
         
         // copy from the host to the device the view matrix and the projection matrix                                                                                       
