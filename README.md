@@ -185,7 +185,12 @@ The follownig controls are used to navigate the scene:
 
 ## Side-by-Side Rendering Comparison (Ray Tracer vs Rasterizer)
 
-Visually, the ray tracer tends to look a bit more “blocky” because you can sometimes see the individual triangles making up the geometry. The rasterizer, on the other hand, looks much smoother and more polished due to GPU-based interpolation and real-time shading.
+
+Visually, the ray tracer tends to look a bit more “blocky” because you can sometimes see the individual triangles making up the geometry. Meanwhile, the rasterizer looks much smoother and more polished due to GPU-based interpolation and real-time shading.
+
+Additionally, the rasterizer does not include shadow checking currently, so it lacks shadows that the ray tracer would normally show. Also, the specular highlights are slightly different. The ray tracer uses a Phong exponent of 32 as its base, while the rasterizer uses 64 as its base, so the highlights look sharper in the rasterized version.
+
+The ray tracer also takes significantly longer to render compared to the rasterizer, since it computes lighting per pixel using ray intersections, while the rasterizer is optimized for real-time performance on the GPU.
 
 Conceptually, the ray tracer is an image-order algorithm (it traces rays per pixel), while the rasterizer is an object-order pipeline (it processes triangles and projects them to the screen).
 

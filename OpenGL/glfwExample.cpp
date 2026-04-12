@@ -325,8 +325,7 @@ int main(void)
         shader.activate();
         glm::mat4 modelTransform = glm::mat4 (1.0);
         
-        // modelTransform = glm::rotate(modelTransform, glm::radians(90.0f), glm::vec3(0, 1, 0));
-        // modelTransform = glm::rotate(modelTransform, glm::radians(90.0f), glm::vec3(0, 0, 1));
+        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(1, 1, 0));
         
         // rotAngle += 0.0001f;
         // if (rotAngle > 2.0 * 3.14159f) {
