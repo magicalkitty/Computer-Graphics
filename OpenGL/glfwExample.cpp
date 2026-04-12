@@ -210,7 +210,7 @@ int main(void)
 
     std::vector<float> host_VertexBuffer;
     BlinnPhong* defaultShader = new BlinnPhong(color(230.0/255.0, 126.0/255.0, 219.0/255.0), 64.0f);
-    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\rico\\source\\Rico\\rico.obj", defaultShader);
+    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\scenes_B\\objFiles\\bunny.obj", defaultShader);
     host_VertexBuffer = myMesh.getVertexBuffer();
 
     // host_VertexBuffer = generateSphere(2.0f, 3);
@@ -272,8 +272,8 @@ int main(void)
     glBindVertexArray(0);
     
     // Create a shader using my GLSLObject class                                                            
-    shader.addShader( "OpenGL\\vertexShader_normal.glsl", sivelab::GLSLObject::VERTEX_SHADER );
-    shader.addShader( "OpenGL\\fragmentShader_normal.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
+    shader.addShader( "OpenGL\\vertexShader_PrepForPerFragment.glsl", sivelab::GLSLObject::VERTEX_SHADER );
+    shader.addShader( "OpenGL\\fragmentShader_BlinnPhong.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
     shader.createProgram();
 
     GLuint projMatrixID, viewMatrixID, modelMatrixID, lightPosID, normalMatrixID, cameraPosID;
@@ -292,7 +292,7 @@ int main(void)
     // Set the identity matrix and then set the rotation M = rot * M
     glm::mat4 modelTransform = glm::mat4 (1.0);
     float rotAngle = 0.0f;
-    modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 0));
+    modelTransform = glm::rotate(modelTransform, 0.0f, glm::vec3(1, 1, 0));
 
     // glm::vec3 m_pos(0,0,0), m_viewDir(0,0,-1);
     // glm::vec3 m_U(1,0,0), m_V(0,1,0), m_W(0,0,1);
@@ -325,12 +325,13 @@ int main(void)
         shader.activate();
         glm::mat4 modelTransform = glm::mat4 (1.0);
         
-        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 1));
+        modelTransform = glm::rotate(modelTransform, glm::radians(90.0f), glm::vec3(1, 0, 0));
+        modelTransform = glm::rotate(modelTransform, glm::radians(90.0f), glm::vec3(0, 1, 0));
         
-        rotAngle += 0.0001f;
-        if (rotAngle > 2.0 * 3.14159f) {
-            rotAngle = 0.0f;
-        }
+        // rotAngle += 0.0001f;
+        // if (rotAngle > 2.0 * 3.14159f) {
+        //     rotAngle = 0.0f;
+        // }
         glUniform3f(cameraPosID, cam.position.x(), cam.position.y(), cam.position.z());
         
         // copy from the host to the device the view matrix and the projection matrix                                                                                       
