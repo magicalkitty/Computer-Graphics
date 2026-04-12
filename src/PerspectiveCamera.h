@@ -20,7 +20,7 @@ class PerspectiveCamera : public Camera{
 
     PerspectiveCamera(glm::vec3 position, glm::vec3 viewDir, int nx, int ny, float fov);
 
-    glm::mat4 getProjectionMatrix() const;
+    glm::mat4 getProjectionMatrix(float aspectratio) const;
 
     private:
         float l, r, b, t; //image plane coords

@@ -149,6 +149,46 @@ After building this project in `buildVCPkg`, run the excetutable with optional a
 ./src/Debug/main.exe [--width image_width] [--height image_height] [--rpp rays_per_pixel] [--recursionDepth max_depth] [--depth focallength]
 ```
 
+# Running the code with openGL
+
+### Building 
+
+To build this project, run the following commands:
+```
+cd buildVCPkg
+cmake --build .
+```
+
+or to use Release to get a faster runtime:
+```
+cd buildVCPkg
+cmake --build . --config Release
+```
+
+### Running
+
+After building this project in `buildVCPkg`, run the excetutable with optional arguments to control rendering settings:
+```
+./OpenGL/Release/glfwExample.exe
+```
+
+### Controls (Interactive Camera)
+
+The follownig controls are used to navigate the scene:
+
+* **W** - Move camera forward
+* **S** - Move camera backward
+* **A** - Move camera left
+* **D** - Move camera right
+* **T** - Print FPS to console
+* **ESC** - Ecit the application
+
+## Side-by-Side Rendering Comparison (Ray Tracer vs Rasterizer)
+
+Visually, the ray tracer tends to look a bit more “blocky” because you can sometimes see the individual triangles making up the geometry. The rasterizer, on the other hand, looks much smoother and more polished due to GPU-based interpolation and real-time shading.
+
+Conceptually, the ray tracer is an image-order algorithm (it traces rays per pixel), while the rasterizer is an object-order pipeline (it processes triangles and projects them to the screen).
+
 
 # Running Unit Tests
 This project includes unit tests for the vec3, ray, and sphere class using Catch2. After building the project successfully in the build directory, run the selected unit tests by navigating to the test executable directory and executing it. 

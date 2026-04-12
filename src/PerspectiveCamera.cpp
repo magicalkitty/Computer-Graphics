@@ -60,7 +60,6 @@ PerspectiveCamera::PerspectiveCamera(glm::vec3 position, glm::vec3 viewDir, int 
     : PerspectiveCamera(vec3(position.x, position.y, position.z),
     vec3(viewDir.x, viewDir.y, viewDir.z), nx, ny, fov) {}
 
-glm::mat4 PerspectiveCamera::getProjectionMatrix() const {
-    float aspectratio = (float)nx/(float)ny;
+glm::mat4 PerspectiveCamera::getProjectionMatrix(float aspectratio) const {
     return glm::perspective(glm::radians(focallength), aspectratio, 0.1f, 100.0f);
 }
