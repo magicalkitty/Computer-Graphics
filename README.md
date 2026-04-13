@@ -180,6 +180,8 @@ The follownig controls are used to navigate the scene:
 * **S** - Move camera backward
 * **A** - Move camera left
 * **D** - Move camera right
+* **SPACE** - Move camera up
+* **LEFT SHIFT** - Move camera down
 * **T** - Print FPS to console
 * **ESC** - Ecit the application
 
