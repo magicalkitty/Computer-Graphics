@@ -69,12 +69,15 @@ OBJMesh::OBJMesh(const std::string &filename, Shader *defaultShader)
 
       m_vertexBuffer.push_back(tv0.x()); m_vertexBuffer.push_back(tv0.y()); m_vertexBuffer.push_back(tv0.z());
       m_vertexBuffer.push_back(v0.normal[0]); m_vertexBuffer.push_back(v0.normal[1]); m_vertexBuffer.push_back(v0.normal[2]);
+      m_vertexBuffer.push_back(v0.texCoord[0]); m_vertexBuffer.push_back(v0.texCoord[1]);
       
       m_vertexBuffer.push_back(tv1.x()); m_vertexBuffer.push_back(tv1.y()); m_vertexBuffer.push_back(tv1.z());
       m_vertexBuffer.push_back(v1.normal[0]); m_vertexBuffer.push_back(v1.normal[1]); m_vertexBuffer.push_back(v1.normal[2]);
-      
+      m_vertexBuffer.push_back(v1.texCoord[0]); m_vertexBuffer.push_back(v1.texCoord[1]);
+
       m_vertexBuffer.push_back(tv2.x()); m_vertexBuffer.push_back(tv2.y()); m_vertexBuffer.push_back(tv2.z());
       m_vertexBuffer.push_back(v2.normal[0]); m_vertexBuffer.push_back(v2.normal[1]); m_vertexBuffer.push_back(v2.normal[2]);
+      m_vertexBuffer.push_back(v2.texCoord[0]); m_vertexBuffer.push_back(v2.texCoord[1]);
 
       // My Triangles take a normal vector specified at each vertex, hence
       // the 3 extra vec3s that are supplied to the constructor.

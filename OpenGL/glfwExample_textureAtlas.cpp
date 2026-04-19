@@ -152,7 +152,7 @@ int main(void)
         exit (-1);
     }
     // throw std::runtime_error("Error! initialization of glfw failed!");
-    TextureData texture = getTexture("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\rico\\source\\Rico\\rico.png");
+    TextureData texture = getTexture("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\scenes_B\\images\\textureAtlas.png");
 
     /* Create a windowed mode window and its OpenGL context */
     int winWidth = 1000;
@@ -251,13 +251,37 @@ int main(void)
     // this is the actual triangle data that will be copied to                                              
     // the GPU memory
 
-    std::vector<float> host_VertexBuffer;
-    BlinnPhong* defaultShader = new BlinnPhong(color(230.0/255.0, 126.0/255.0, 219.0/255.0), 64.0f);
-    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\rico\\source\\Rico\\rico.obj", defaultShader);
-    host_VertexBuffer = myMesh.getVertexBuffer();
+    std::vector<float> host_VertexBuffer =
+{
+    // FACE 1 (front square) uses the top left quadrant
+    // u: 0 -> 0.5
+    // v: 0.5 -> 1
 
-    // host_VertexBuffer = generateSphere(2.0f, 3);
-    std::cout << "Vertex count: " << host_VertexBuffer.size() / 8 << std::endl;
+    // Triangle 1
+    -1, -1,  1,   0,0,1,   0.0f, 0.5f,
+     1, -1,  1,   0,0,1,   0.5f, 0.5f,
+     1,  1,  1,   0,0,1,   0.5f, 1.0f,
+
+    // Triangle 2
+    -1, -1,  1,   0,0,1,   0.0f, 0.5f,
+     1,  1,  1,   0,0,1,   0.5f, 1.0f,
+    -1,  1,  1,   0,0,1,   0.0f, 1.0f,
+
+
+    // FACE 2 (right square) uses the top right quadrant
+    // u: 0.5 -> 1
+    // v: 0.5 -> 1
+
+    // Triangle 1
+     1, -1,  1,   1,0,0,   0.5f, 0.5f,
+     1, -1, -1,   1,0,0,   1.0f, 0.5f,
+     1,  1, -1,   1,0,0,   1.0f, 1.0f,
+
+    // Triangle 2
+     1, -1,  1,   1,0,0,   0.5f, 0.5f,
+     1,  1, -1,   1,0,0,   1.0f, 1.0f,
+     1,  1,  1,   1,0,0,   0.5f, 1.0f,
+};
 
     // std::vector< float > host_VertexBuffer{ //vertex, normal
     //                                         -3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 1.0f, //255.0/255.0f, 172.0/255.0f, 227.0/255.0f,
@@ -320,7 +344,7 @@ int main(void)
     
     // Create a shader using my GLSLObject class                                                            
     shader.addShader( "OpenGL\\vertexShader_PrepForPerFragment.glsl", sivelab::GLSLObject::VERTEX_SHADER );
-    shader.addShader( "OpenGL\\fragmentShader_Lambertian_texture.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
+    shader.addShader( "OpenGL\\fragmentShader_BlinnPhong_texture.glsl", sivelab::GLSLObject::FRAGMENT_SHADER );
     shader.createProgram();
 
     GLuint projMatrixID, viewMatrixID, modelMatrixID, lightPosID, normalMatrixID, cameraPosID;
@@ -385,7 +409,7 @@ int main(void)
         if (rotAngle > 2.0 * 3.14159f) {
             rotAngle = 0.0f;
         }
-        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 1));
+        modelTransform = glm::rotate(modelTransform, rotAngle, glm::vec3(0, 1, 0));
 
         glUniform3f(cameraPosID, cam.position.x(), cam.position.y(), cam.position.z());
         
