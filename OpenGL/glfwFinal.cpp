@@ -211,6 +211,8 @@ static double g_lastMouseX       =   0.0;
 static double g_lastMouseY       =   0.0;
 static bool   g_firstMouse       = true;   // skip the jump on the very first event
  
+static glm::vec3 g_moveUp(0,1,0);
+
 // GLFW cursor-position callback.
 static void mouseCallback(GLFWwindow* /*window*/, double xpos, double ypos)
 {
@@ -234,33 +236,33 @@ static void mouseCallback(GLFWwindow* /*window*/, double xpos, double ypos)
     if (g_pitch < -89.0f) g_pitch = -89.0f;
 }
 
+
 static void updateCameraFromMouse(PerspectiveCamera& cam)
 {
     float yawRad   = glm::radians(g_yaw);
     float pitchRad = glm::radians(g_pitch);
- 
+
     glm::vec3 forward;
     forward.x = std::cos(pitchRad) * std::cos(yawRad);
     forward.y = std::sin(pitchRad);
     forward.z = std::cos(pitchRad) * std::sin(yawRad);
-    forward   = glm::normalize(forward);
- 
+    forward = glm::normalize(forward);
+
     glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
- 
-    glm::vec3 right = glm::normalize(glm::cross(forward, worldUp)); // U
-    glm::vec3 up    = glm::normalize(glm::cross(right, forward));   // V  (recomputed, always perp)
- 
-    cam.W = vec3(-forward.x, -forward.y, -forward.z); // -forward
-    cam.U = vec3( right.x, right.y, right.z);
-    cam.V = vec3( up.x, up.y, up.z);
-}
- 
+    glm::vec3 right = glm::normalize(glm::cross(forward, worldUp));
+    glm::vec3 up    = glm::normalize(glm::cross(right, forward));
+
+    cam.W = vec3(-forward.x, -forward.y, -forward.z);
+    cam.U = vec3(right.x, right.y, right.z);
+    cam.V = vec3(up.x, up.y, up.z);
+
+} 
 
 static const double METERS_PER_UNIT = 1.496e11 / 29.5;   // ~5.07e9 m per scene unit
-static const double V_EARTH_REAL    = 29780.0;            // m/s
-static const double V_EARTH_SCENE   = V_EARTH_REAL / METERS_PER_UNIT; // scene-units/s
-static const double R_EARTH_SCENE   = 29.5;
-static const double GM_SCENE        = V_EARTH_SCENE * V_EARTH_SCENE * R_EARTH_SCENE;
+static const double V_EARTH_REAL = 29780.0;            // m/s
+static const double V_EARTH_SCENE = V_EARTH_REAL / METERS_PER_UNIT; // scene-units/s
+static const double R_EARTH_SCENE = 29.5;
+static const double GM_SCENE = V_EARTH_SCENE * V_EARTH_SCENE * R_EARTH_SCENE;
 static const double TIME_SCALE = 5.0e5;
 
 struct Sphere {
@@ -286,7 +288,8 @@ Sphere createSphere(GLuint texID, glm::vec3 position, glm::vec3 scale = glm::vec
         float vCirc = (r > 0.001f)
             ? (float)std::sqrt(GM_SCENE / (double)r)
             : 0.0f;
-        s.velocity = glm::vec3(0.0f, 0.0f, -vCirc);
+        glm::vec3 dir = glm::normalize(glm::vec3(position.z, 0.0f, -position.x));
+        s.velocity = dir * vCirc;
     } else {
         s.velocity = glm::vec3(0.0f);
     }
@@ -304,20 +307,22 @@ void updateOrbits(std::vector<Sphere>& planets,
     {
         if (i == sunIndex) continue;
 
-        glm::vec3 pos = planets[i].position;
-
-        // Vector from planet to sun
-        glm::vec3 toSun = glm::vec3(0.0f) - pos;
+        glm::vec3 toSun = glm::vec3(0.0f) - planets[i].position;
         float r = glm::length(toSun);
-        if (r < 0.001f) continue; 
+        if (r < 0.001f) continue;
 
-        glm::vec3 dir = toSun / r;
+        glm::vec3 accel0 = (toSun / r) * (float)(GM_SCENE / ((double)r * (double)r));
 
-        // Gravitational acceleration magnitude: a = GM / r^2
-        float accel = (float)(GM_SCENE / ((double)r * (double)r));
+        planets[i].position += planets[i].velocity * (float)simDt
+                              + accel0 * 0.5f * (float)(simDt * simDt);
 
-        planets[i].velocity  += dir * accel * (float)simDt;
-        planets[i].position  += planets[i].velocity * (float)simDt;
+        glm::vec3 toSun2 = glm::vec3(0.0f) - planets[i].position;
+        float r2 = glm::length(toSun2);
+        if (r2 < 0.001f) continue;
+
+        glm::vec3 accel1 = (toSun2 / r2) * (float)(GM_SCENE / ((double)r2 * (double)r2));
+
+        planets[i].velocity += (accel0 + accel1) * 0.5f * (float)simDt;
     }
 }
 
@@ -447,7 +452,7 @@ int main(void)
     // glm::mat4 projectionMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.0f, 10.0f);
     // glm::mat4 M_ortho = glm::ortho(left, right, bottom, top, near, far);
     float aspect = (float)fb_width / (float)fb_height;
-    glm::mat4 perspMat = glm::perspective(glm::radians(90.0f), aspect, 5.0f, 2000.0f);
+    glm::mat4 perspMat = glm::perspective(glm::radians(90.0f), aspect, 0.1f, 5000.0f);
 
     GLint major_version;
     glGetIntegerv(GL_MAJOR_VERSION, &major_version);
@@ -845,22 +850,22 @@ int main(void)
         float moveRatePerFrame = 0.05;
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        cam.position = cam.position - cam.W * moveRatePerFrame;
-        }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        cam.position = cam.position - cam.U * moveRatePerFrame;
+            cam.position = cam.position - vec3(cam.W.x(), cam.W.y(), cam.W.z()) * moveRatePerFrame;
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        cam.position = cam.position + cam.W * moveRatePerFrame;
+            cam.position = cam.position + vec3(cam.W.x(), cam.W.y(), cam.W.z()) * moveRatePerFrame;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            cam.position = cam.position - vec3(cam.U.x(), cam.U.y(), cam.U.z()) * moveRatePerFrame;
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        cam.position = cam.position + cam.U * moveRatePerFrame;
+            cam.position = cam.position + vec3(cam.U.x(), cam.U.y(), cam.U.z()) * moveRatePerFrame;
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            cam.position = cam.position + cam.V * moveRatePerFrame;
+            cam.position = cam.position + vec3(0, 1, 0) * moveRatePerFrame;
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            cam.position = cam.position - cam.V * moveRatePerFrame;
+            cam.position = cam.position - vec3(0, 1, 0) * moveRatePerFrame;
         }
 
         if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
