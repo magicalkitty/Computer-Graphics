@@ -172,16 +172,22 @@ After building this project in `buildVCPkg`, run the excetutable with optional a
 ./OpenGL/Release/glfwExample.exe
 ```
 
+For the final render with the solar system, run:
+```
+./OpenGL/Release/glfwFinal.exe
+```
+
 ### Controls (Interactive Camera)
 
 The follownig controls are used to navigate the scene:
 
-* **W** - Move camera forward
+* **Mouse Movement** - Controls camera view direction (look around)
+* **W** - Move camera forward (relative to where you're looking)
 * **S** - Move camera backward
 * **A** - Move camera left
 * **D** - Move camera right
-* **SPACE** - Move camera up
-* **LEFT SHIFT** - Move camera down
+* **SPACE** - Move camera up (fixed Y-axis)
+* **LEFT SHIFT** - Move camera down (fized Y-axis)
 * **T** - Print FPS to console
 * **ESC** - Ecit the application
 

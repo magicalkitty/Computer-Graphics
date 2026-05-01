@@ -301,28 +301,34 @@ void updateOrbits(std::vector<Sphere>& planets,
                   double timeScale,
                   int    sunIndex = 0)
 {
-    double simDt = dt * timeScale;
+    // Subcycle: split each frame into many small steps so inner
+    // planets (Mercury especially) stay on stable circular orbits
+    const int   SUBSTEPS = 100;
+    double simDt = (dt * timeScale) / SUBSTEPS;
 
-    for (int i = 0; i < (int)planets.size(); ++i)
+    for (int step = 0; step < SUBSTEPS; ++step)
     {
-        if (i == sunIndex) continue;
+        for (int i = 0; i < (int)planets.size(); ++i)
+        {
+            if (i == sunIndex) continue;
 
-        glm::vec3 toSun = glm::vec3(0.0f) - planets[i].position;
-        float r = glm::length(toSun);
-        if (r < 0.001f) continue;
+            glm::vec3 toSun = glm::vec3(0.0f) - planets[i].position;
+            float r = glm::length(toSun);
+            if (r < 0.001f) continue;
 
-        glm::vec3 accel0 = (toSun / r) * (float)(GM_SCENE / ((double)r * (double)r));
+            glm::vec3 accel0 = (toSun / r) * (float)(GM_SCENE / ((double)r * (double)r));
 
-        planets[i].position += planets[i].velocity * (float)simDt
-                              + accel0 * 0.5f * (float)(simDt * simDt);
+            planets[i].position += planets[i].velocity * (float)simDt
+                                  + accel0 * 0.5f * (float)(simDt * simDt);
 
-        glm::vec3 toSun2 = glm::vec3(0.0f) - planets[i].position;
-        float r2 = glm::length(toSun2);
-        if (r2 < 0.001f) continue;
+            glm::vec3 toSun2 = glm::vec3(0.0f) - planets[i].position;
+            float r2 = glm::length(toSun2);
+            if (r2 < 0.001f) continue;
 
-        glm::vec3 accel1 = (toSun2 / r2) * (float)(GM_SCENE / ((double)r2 * (double)r2));
+            glm::vec3 accel1 = (toSun2 / r2) * (float)(GM_SCENE / ((double)r2 * (double)r2));
 
-        planets[i].velocity += (accel0 + accel1) * 0.5f * (float)simDt;
+            planets[i].velocity += (accel0 + accel1) * 0.5f * (float)simDt;
+        }
     }
 }
 
