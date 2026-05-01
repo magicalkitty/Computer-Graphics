@@ -152,7 +152,7 @@ int main(void)
         exit (-1);
     }
     // throw std::runtime_error("Error! initialization of glfw failed!");
-    TextureData texture = getTexture("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\rico\\source\\Rico\\rico.png");
+    TextureData texture = getTexture("C:\\Users\\evael\\Documents\\Computer Graphics\\Computer-Graphics\\src\\sceneData\\rico\\textures\\rico.png");
 
     /* Create a windowed mode window and its OpenGL context */
     int winWidth = 1000;
@@ -253,7 +253,7 @@ int main(void)
 
     std::vector<float> host_VertexBuffer;
     BlinnPhong* defaultShader = new BlinnPhong(color(230.0/255.0, 126.0/255.0, 219.0/255.0), 64.0f);
-    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\starterCode\\src\\sceneData\\rico\\source\\Rico\\rico.obj", defaultShader);
+    OBJMesh myMesh("C:\\Users\\evael\\Documents\\Computer Graphics\\Computer-Graphics\\src\\sceneData\\rico\\source\\Rico\\rico.obj", defaultShader);
     host_VertexBuffer = myMesh.getVertexBuffer();
 
     // host_VertexBuffer = generateSphere(2.0f, 3);
